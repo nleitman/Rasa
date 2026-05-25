@@ -342,8 +342,7 @@ flows:
         confidence_threshold: 0.0
   flow_cancel_subscription:
     name: Cancel subscription
-    description: This flow is only for users who want to cancel an actual subscription, membership, service, or recurring order they pay for, such as a gym membership, meal kit service, internet service, or subscription box. Do not use this flow when the user says "cancel this request", "nevermind", "stop", "go back", "main menu", or "I don't want to continue"; those mean the user wants to cancel the current conversation flow, not cancel a subscription.
-    run_pattern_completed: true
+    description: Internal follow-up flow used after flow_cancel_item determines that the cancellation target is a subscription, membership, service, or recurring plan. Do not start this flow directly from the user's first message. The generic flow_cancel_item should first ask what the user wants to cancel and resolve the target.
     steps:
     - id: flow_cancel_subscription_0_collect_slot_subscription_type
       next: flow_cancel_subscription_1_set_slots
@@ -355,15 +354,9 @@ flows:
       rejections: []
       force_slot_filling: false
     - id: flow_cancel_subscription_1_set_slots
-      next: flow_cancel_subscription_2_call_flow_pause_subscription
+      next: message_utter_check_for_promotions
       set_slots:
       - slot_from_cancel_flow: "Yes"
-    - id: flow_cancel_subscription_2_call_flow_pause_subscription
-      next:
-      - if: slots.slot_pause_subscription is "No"
-        then: message_utter_check_for_promotions
-      - else: END
-      call: flow_pause_subscription
     - id: message_utter_check_for_promotions
       next: flow_cancel_subscription_4_action_artificial_delay
       action: utter_check_for_promotions
@@ -411,15 +404,14 @@ flows:
       action: utter_sms_promo_text_not_received
     - id: flow_cancel_subscription_12_link_pattern_human_handoff
       link: pattern_human_handoff
-#    nlu_trigger:
-#    - intent:
-#        name: cancel_item
-#        confidence_threshold: 0.8
+    nlu_trigger:
+    - intent:
+        name: cancel_subscription
+        confidence_threshold: 0.0
 
   flow_cancel_item:
     name: Cancel item
-    description: This flow is for users who want to cancel an actual product, service, subscription, membership, appointment, order, reservation, delivery, or recurring plan. Do not use this flow when the user says "cancel this request", "nevermind", "stop", "go back", or "main menu"; those mean the user wants to cancel the current conversation flow.
-    run_pattern_completed: true
+    description: This flow is the generic cancellation router for users who want to cancel an actual product, service, subscription, membership, recurring plan, order, appointment, reservation, or delivery. Use this flow when the user says things like cancel my subscription, cancel my internet service, cancel my gym membership, cancel my order, or cancel my appointment. Ask what they want to cancel, then resolve the target and route to the correct cancellation flow. Do not use this flow when the user says "cancel this request", "nevermind", "stop", "go back", or "main menu"; those mean the user wants to cancel the current conversation flow.
     steps:
       - id: flow_cancel_item_0_get_cancellable_items
         next: flow_cancel_item_1_collect_cancellation_target
@@ -427,6 +419,7 @@ flows:
 
       - id: flow_cancel_item_1_collect_cancellation_target
         next: flow_cancel_item_2_resolve_cancellation_target
+        description: The actual product, service, subscription, membership, order, appointment, reservation, or delivery the user wants to cancel. The user should describe the thing to cancel, such as internet service, gym membership, meal kit service, order, appointment, reservation, or delivery. Do not ask whether they mean a specific item or an entire subscription.
         collect: slot_cancellation_target
         utter: utter_ask_slot_cancellation_target
         ask_before_filling: false

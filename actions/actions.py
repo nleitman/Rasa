@@ -188,6 +188,9 @@ class ActionGetCancellableItems(Action):
             {"id": "sub_001", "name": "Gym membership", "type": "subscription"},
             {"id": "sub_002", "name": "Internet service", "type": "subscription"},
             {"id": "sub_003", "name": "Meal kit service", "type": "subscription"},
+            {"id": "sub_004", "name": "Subscription box", "type": "subscription"},
+            {"id": "sub_005", "name": "Monthly plan", "type": "subscription"},
+            {"id": "sub_006", "name": "Premium membership", "type": "subscription"},
             {"id": "ord_123", "name": "Order 12345", "type": "order"},
             {"id": "appt_456", "name": "Appointment on Friday", "type": "appointment"},
         ]
@@ -223,10 +226,49 @@ class ActionResolveCancellationTarget(Action):
 
         selected_normalized = selected.lower().strip()
 
+        # Do not treat vague wording as a real cancellable target.
+        vague_targets = {
+            "item",
+            "specific item",
+            "something",
+            "thing",
+            "entire subscription",
+            "my subscription",
+            "subscription",
+            "membership",
+            "service",
+        }
+
+        # These are subscription-like words, but if the user only says one of these,
+        # we still want the bot to ask for the actual subscription/service.
+        if selected_normalized in vague_targets:
+            return [
+                SlotSet("slot_cancellation_type", None),
+                SlotSet("selected_cancellable_item_id", None),
+                SlotSet("slot_subscription_type", None),
+            ]
+
+        # Aliases let natural descriptions resolve to demo items.
+        aliases = {
+            "gym": "gym membership",
+            "gym membership": "gym membership",
+            "internet": "internet service",
+            "internet service": "internet service",
+            "wifi": "internet service",
+            "meal kit": "meal kit service",
+            "meal kit service": "meal kit service",
+            "subscription box": "subscription box",
+            "monthly plan": "monthly plan",
+            "premium membership": "premium membership",
+        }
+
+        normalized_target = aliases.get(selected_normalized, selected_normalized)
+
         matches = [
             item for item in items
-            if item["name"].lower().strip() == selected_normalized
-            or selected_normalized in item["name"].lower().strip()
+            if item["name"].lower().strip() == normalized_target
+            or normalized_target in item["name"].lower().strip()
+            or item["name"].lower().strip() in normalized_target
         ]
 
         if not matches:

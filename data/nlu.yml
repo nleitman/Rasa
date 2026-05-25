@@ -141,17 +141,18 @@ nlu:
 
   - intent: cancel_item
     examples: |
+  - intent: cancel_item
+    examples: |
       - I want to cancel something
       - I need to cancel something
       - cancel something for me
-      - I want to cancel my account
-      - cancel my subscription
-      - cancel my membership
-      - cancel my service
       - cancel my order
       - cancel my appointment
       - cancel my reservation
       - cancel my delivery
+      - cancel my [subscription](cancellation_target)
+      - cancel my [membership](cancellation_target)
+      - cancel my [service](cancellation_target)
       - cancel my [gym membership](cancellation_target)
       - cancel my [internet service](cancellation_target)
       - cancel my [meal kit service](cancellation_target)

@@ -40,7 +40,7 @@ responses:
   - text: What's the order number your looking for?
   - text: What's the order number for the item you're asking about?
   utter_ask_slot_pause_subscription:
-  - text: To confirm, you'd like to pause your current subscription?
+  - text: Just to clarify, are you looking to cancel your current {slot_subscription_type} subscription?
     metadata:
       rephrase: true
 #    buttons:
@@ -146,7 +146,7 @@ responses:
   - text: That doesn't seem to be a valid order number. Order numbers start with 3 letters and end with 3 numbers.
 
   utter_ask_slot_cancellation_target:
-    - text: "What would you like to cancel? You can say a subscription, order, appointment, membership, service, reservation, or delivery. You can also say 'cancel this request' to stop."
+    - text: "What would you like to cancel?"
 
   utter_cancellation_target_not_found:
     - text: "I couldn't find that item on your account. Please choose one of these: {available_cancellable_items_text}. You can also say 'cancel this request' to stop."
@@ -223,7 +223,7 @@ slots:
   slot_subscription_type:
     type: text
     mappings:
-      - type: custom
+      - type: from_llm
   slot_user_has_return_label:
     type: categorical
     mappings:

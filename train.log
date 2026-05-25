@@ -1,0 +1,21 @@
+2026-05-25 12:35:49 INFO     rasa.tracing.backend_tracing_config  - {"filename": "/Users/normanleitman/Documents/code/Rasa/endpoints.yml", "event_info": "No backend tracing configuration found in endpoints.yml. Supported backend tracing types are 'jaeger' and 'otlp'. Backend tracing will not be configured.", "event": "endpoint.read.no_backend_tracing_config", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.shared.utils.llm  - {"event_info": "Custom prompt template read successfully from `prompts/rephraser_personality_prompt.jinja2`.", "prompt_file_path": "prompts/rephraser_personality_prompt.jinja2", "log_source_component": "ContextualResponseRephraser", "log_source_method": "init", "event": "utils.llm.get_prompt_template.custom_prompt_template_read_successfully", "level": "info"}
+2026-05-25 12:35:50 WARNING  rasa.shared.utils.llm  - {"event_info": "The LLM_API_HEALTH_CHECK environment variable is set to false, which will disable LLM health check. It is recommended to set this variable to true in production environments.", "event": "contextual_response_rephraser.init.perform_llm_health_check.disabled", "level": "warning"}
+2026-05-25 12:35:50 INFO     rasa.cli.train  - {"event_info": "Started validating domain and training data...", "event": "cli.train.run_training", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.shared.core.domain  - {"event": "domain.from_yaml.validating", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.shared.core.domain  - {"event": "domain.from_yaml.validating", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.shared.core.domain  - {"event": "domain.from_yaml.validating", "level": "info"}
+[93m/Users/normanleitman/Documents/code/Rasa/.venv/lib/python3.11/site-packages/rasa/shared/core/slot_mappings.py:181: FutureWarning: The `custom` slot mapping type is deprecated and will be removed in Rasa Pro 4.0.0. Please use the `controlled` slot mapping type instead.
+  rasa.shared.utils.io.raise_deprecation_warning(
+[0m2026-05-25 12:35:50 INFO     rasa.shared.core.domain  - {"event": "domain.from_yaml.validating", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.validator  - {"event_info": "Validating intents...", "event": "validator.verify_intents_in_stories.start", "level": "info"}
+2026-05-25 12:35:50 WARNING  rasa.validator  - {"intent": "cancel_current_request", "event_info": "The intent 'cancel_current_request' is not used in any story, rule or flow.", "event": "validator.verify_intents_in_stories_or_flows.not_used", "level": "warning"}
+2026-05-25 12:35:50 WARNING  rasa.validator  - {"intent": "knowledge_question", "event_info": "The intent 'knowledge_question' is not used in any story, rule or flow.", "event": "validator.verify_intents_in_stories_or_flows.not_used", "level": "warning"}
+2026-05-25 12:35:50 INFO     rasa.validator  - {"event_info": "Validating uniqueness of intents and stories...", "event": "validator.verify_example_repetition_in_intents.start", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.validator  - {"event_info": "Story structure validation...", "event": "validator.verify_story_structure.start", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.core.training.story_conflict  - Considering all preceding turns for conflict analysis.
+2026-05-25 12:35:50 INFO     rasa.validator  - {"event_info": "No story structure conflicts found.", "event": "validator.verify_story_structure.no_conflicts", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.validator  - {"event": "validation.flows.started", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.validator  - {"event": "validation.flows.ended", "level": "info"}
+2026-05-25 12:35:50 INFO     rasa.cli.validation.bot_config  - {"sub_agents_path": "sub_agents", "event_info": "Default sub-agents directory does not exist, no sub-agents will be available.", "event": "cli.validate_files.sub_agents_validation", "level": "info"}
+2026-05-25 12:35:51 ERROR    rasa.__main__  - {"event_info": "The DIETClassifier component requires additional dependencies which are not installed. Please install the required extra by running: pip install 'rasa-pro[nlu]' OR poetry add 'rasa-pro[nlu]'", "event": "cli.exception.rasa_exception", "level": "error"}
