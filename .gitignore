@@ -10,3 +10,7 @@ __pycache__/
 models/
 validate.log
 git_output
+
+# Cache folders
+.rasa/cache/
+.cache/
