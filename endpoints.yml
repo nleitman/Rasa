@@ -1,0 +1,33 @@
+
+action_endpoint:
+  actions_module: "actions"
+
+nlg:
+  type: rephrase
+  llm:
+    model_group: gpt-4o-mini
+  prompt_template: prompts/rephraser_personality_prompt.jinja2
+  rephrase_all: False
+
+model_groups:
+  - id: gpt-4o
+    models:
+      - provider: openai
+        model: gpt-4o-2024-11-20
+        timeout: 30
+        temperature: 0.0
+        top_p: 0.0
+  - id: gpt-4o-mini
+    models:
+      - provider: openai
+        model: gpt-4o-mini-2024-07-18
+        temperature: 0.7
+
+# MCP servers used for this assistant.
+mcp_servers:
+  - name: appointment-booking
+    url: http://44.198.186.55:8000/mcp
+    type: http
+  - name: docs-vectorize
+    url: https://docs.mcp.cloudflare.com/mcp
+    type: http

@@ -1,0 +1,44 @@
+flows:
+  collect_feedback:
+    name: Collect feedback
+    description: this flow is triggered to collect feedback.
+    if: False
+    steps:
+      - collect: feedback
+        description: collect user feedback at the end of the flow as yes or no.
+        utter: utter_feedback_success
+        ask_before_filling: true
+        next:
+          - if: slots.feedback
+            then:
+            - action: utter_glad_to_help
+            - link: hangup_call
+          - else:
+            - action: utter_callback
+            - action: utter_connect_to_specialist
+            - link: hangup_call
+
+  hangup_call:
+    name: Hangup call
+    description: hang up the call when done
+    if: False
+    steps:
+    - action: action_hangup
+      next: END
+
+  help:
+    name: help
+    description: This flow addresses user inquiries about the assistant's capabilities.
+    nlu_trigger:
+      - intent:
+          name: ask_help
+          confidence_threshold: 0.8
+    run_pattern_completed: false
+    steps:
+      - action: utter_help
+
+  pattern_continue_interrupted:
+    description: Conversation repair flow for managing when users switch between different flows
+    name: pattern continue interrupted
+    steps:
+      - action: action_continue_interrupted_flow

@@ -1,0 +1,15 @@
+{
+  "0": "ask_help",
+  "1": "ask_store_hours",
+  "2": "ask_store_hours_for_day",
+  "3": "cancel_current_request",
+  "4": "cancel_subscription",
+  "5": "check_order_status",
+  "6": "exchange_item",
+  "7": "knowledge_question",
+  "8": "list_active_orders",
+  "9": "out_of_scope",
+  "10": "pause_subscription",
+  "11": "return_item",
+  "12": "user_states_order_not_received"
+}

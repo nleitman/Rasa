@@ -1,0 +1,512 @@
+# E2E test cases for the Rasa assignment.
+# Save this as: tests/e2e_test_cases.yml
+#
+# Run:
+#   rasa run actions --debug
+#   rasa test e2e tests/e2e_test_cases.yml --endpoints endpoints.yml -o tests/e2e_results.yml -f tests/e2e_failed_tests.yml
+#
+# These tests use actual flow/action/slot/utter names from your uploaded flows.yml/patterns.yml.
+# They intentionally use response names and assertions instead of exact bot text where possible,
+# because rephrasing can make exact text brittle.
+
+fixtures:
+  - known_exchange_order:
+      - slot_exchange_order_number: "ord123"
+
+  - monday_store_hours_context:
+      - slot_store_hours_day: "monday"
+
+test_cases:
+
+  # -----------------------------
+  # Store hours
+  # -----------------------------
+
+  - test_case: store_hours_general_question_runs_all_hours_action
+    steps:
+      - user: "what are your store hours"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_get_store_hours"
+          - action_executed: "action_get_all_store_hours"
+          - slot_was_not_set:
+              - name: "slot_store_hours_day"
+          - bot_did_not_utter:
+              utter_name: "utter_ask_slot_store_hours_day"
+
+  - test_case: store_hours_specific_day_sets_day_slot_and_runs_day_action
+    steps:
+      - user: "what are your hours on monday"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_get_store_hours_for_day"
+          - slot_was_set:
+              - name: "slot_store_hours_day"
+                value: "monday"
+          - action_executed: "action_get_store_hours_for_day"
+
+  - test_case: store_hours_specific_day_from_prefilled_context
+    fixtures:
+      - monday_store_hours_context
+    steps:
+      - user: "what are the hours for Monday?"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_get_store_hours_for_day"
+          - slot_was_set:
+              - name: "slot_store_hours_day"
+                value: "monday"
+          - action_executed: "action_get_store_hours_for_day"
+
+  # -----------------------------
+  # Order status
+  # -----------------------------
+
+  - test_case: check_order_status_in_transit_order
+    steps:
+      - user: "check the status of order ord123"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_check_order_status"
+          - slot_was_set:
+              - name: "slot_order_number"
+                value: "ord123"
+          - action_executed: "utter_order_in_transit"
+
+  - test_case: check_order_status_delivered_order
+    steps:
+      - user: "what is the status of order ord456"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_check_order_status"
+          - slot_was_set:
+              - name: "slot_order_number"
+                value: "ord456"
+          - action_executed: "utter_order_delivered"
+
+  - test_case: check_order_status_delayed_order
+    steps:
+      - user: "track order ord555"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_check_order_status"
+          - slot_was_set:
+              - name: "slot_order_number"
+                value: "ord555"
+          - action_executed: "utter_order_delayed"
+
+  - test_case: order_not_received_links_to_check_order_status
+    steps:
+      - user: "I have not received my order"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_user_states_order_not_received"
+          - action_executed: "utter_user_states_order_not_received"
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_check_order_status"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_order_number"
+
+  - test_case: list_active_orders
+    steps:
+      - user: "what are my active orders"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_list_active_orders"
+          - action_executed: "utter_list_order_numbers"
+
+  # -----------------------------
+  # Return item
+  # -----------------------------
+
+  - test_case: return_item_success_with_existing_label
+    steps:
+      - user: "I want to return an item"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_return_item"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_order_number"
+
+      - user: "ord123"
+        assertions:
+          - slot_was_set:
+              - name: "slot_order_number"
+                value: "ord123"
+              - name: "slot_exchange_order_number"
+                value: "999"
+          - action_executed: "utter_acknowledge_return_request"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_request_exchange_item"
+
+      - user: "No"
+        assertions:
+          - slot_was_set:
+              - name: "slot_request_exchange_item"
+                value: "No"
+          - action_executed: "utter_confirm_return_requested"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_user_has_return_label"
+
+      - user: "Yes, I have the return label"
+        assertions:
+          - action_executed: "utter_return_item_instructions"
+
+  - test_case: return_item_success_needs_label_emailed
+    steps:
+      - user: "I need to return order ord123"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_return_item"
+          - slot_was_set:
+              - name: "slot_order_number"
+                value: "ord123"
+          - action_executed: "utter_acknowledge_return_request"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_request_exchange_item"
+
+      - user: "No"
+        assertions:
+          - slot_was_set:
+              - name: "slot_request_exchange_item"
+                value: "No"
+          - action_executed: "utter_confirm_return_requested"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_user_has_return_label"
+
+      - user: "No, I do not have the return label"
+        assertions:
+          - action_executed: "utter_email_label_return_instructions"
+
+  - test_case: return_item_not_delivered_order_routes_to_handled_question
+    steps:
+      - user: "I want to return order ord456"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_return_item"
+          - slot_was_set:
+              - name: "slot_order_number"
+                value: "ord456"
+          - action_executed: "utter_unable_to_return_not_delivered"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_return_request_handled"
+
+      - user: "Yes"
+        assertions:
+          - slot_was_set:
+              - name: "slot_return_request_handled"
+                value: "Yes"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_speak_to_human"
+
+  - test_case: return_item_invalid_order_number_rejected
+    steps:
+      - user: "I want to return an item"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_return_item"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_order_number"
+
+      - user: "my order number is 12345"
+        assertions:
+          - bot_uttered:
+              utter_name: "utter_valid_order_number_syntax"
+
+  - test_case: return_item_user_requests_exchange_links_to_exchange_flow
+    steps:
+      - user: "I want to return order ord123"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_return_item"
+          - slot_was_set:
+              - name: "slot_order_number"
+                value: "ord123"
+              - name: "slot_exchange_order_number"
+                value: "999"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_request_exchange_item"
+
+      - user: "Yes"
+        assertions:
+          - slot_was_set:
+              - name: "slot_request_exchange_item"
+                value: "Yes"
+              - name: "slot_exchange_order_number"
+                value: "ord123"
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_exchange_item"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_reason_for_item_exchange"
+
+  # -----------------------------
+  # Exchange item
+  # -----------------------------
+
+  - test_case: exchange_item_success_with_existing_label
+    steps:
+      - user: "I want to exchange an item"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_exchange_item"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_exchange_order_number"
+
+      - user: "ord123"
+        assertions:
+          - slot_was_set:
+              - name: "slot_exchange_order_number"
+                value: "ord123"
+          - action_executed: "utter_confirm_exchange_item"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_reason_for_item_exchange"
+
+      - user: "it does not fit"
+        assertions:
+          - slot_was_set:
+              - name: "slot_reason_for_item_exchange"
+          - action_executed: "utter_exchange_reason_thank_you"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_user_has_return_label"
+
+      - user: "Yes, I have the return label"
+        assertions:
+          - action_executed: "utter_return_item_instructions"
+
+  - test_case: exchange_item_success_needs_label_emailed
+    steps:
+      - user: "exchange order ord123"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_exchange_item"
+          - slot_was_set:
+              - name: "slot_exchange_order_number"
+                value: "ord123"
+          - action_executed: "utter_confirm_exchange_item"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_reason_for_item_exchange"
+
+      - user: "wrong size"
+        assertions:
+          - slot_was_set:
+              - name: "slot_reason_for_item_exchange"
+          - action_executed: "utter_exchange_reason_thank_you"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_user_has_return_label"
+
+      - user: "No, I do not have the return label"
+        assertions:
+          - action_executed: "utter_email_label_return_instructions"
+
+  - test_case: exchange_item_invalid_order_number_rejected
+    steps:
+      - user: "I want to exchange an item"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_exchange_item"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_exchange_order_number"
+
+      - user: "my order number is bad-order-number"
+        assertions:
+          - bot_uttered:
+              utter_name: "utter_valid_order_number_syntax"
+
+  - test_case: exchange_item_unknown_order_offers_specialist
+    steps:
+      - user: "I want to exchange order abc909"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_exchange_item"
+          - slot_was_set:
+              - name: "slot_exchange_order_number"
+                value: "abc909"
+          - action_executed: "utter_order_number_not_found"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_speak_to_human"
+
+      - user: "Yes"
+        assertions:
+          - slot_was_set:
+              - name: "slot_speak_to_human"
+                value: "Yes"
+          - action_executed: "utter_connect_to_specialist"
+
+  - test_case: exchange_item_prefilled_order_skips_order_number_collection
+    fixtures:
+      - known_exchange_order
+    steps:
+      - user: "I want to exchange this item"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_exchange_item"
+          - slot_was_set:
+              - name: "slot_exchange_order_number"
+                value: "ord123"
+          - bot_did_not_utter:
+              utter_name: "utter_ask_slot_exchange_order_number"
+          - action_executed: "utter_confirm_exchange_item"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_reason_for_item_exchange"
+
+  # -----------------------------
+  # Subscription cancellation / pause
+  # -----------------------------
+
+  - test_case: pause_subscription_direct_flow
+    steps:
+      - user: "I want to pause my gym membership"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_pause_subscription"
+          - slot_was_set:
+              - name: "slot_subscription_type"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_pause_subscription"
+
+      - user: "Yes"
+        assertions:
+          - slot_was_set:
+              - name: "slot_pause_subscription"
+                value: "Yes"
+          - action_executed: "utter_subscription_paused"
+
+  - test_case: cancel_subscription_declines_pause_and_declines_retention_offer
+    steps:
+      - user: "cancel my gym membership"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_cancel_subscription"
+          - slot_was_set:
+              - name: "slot_subscription_type"
+              - name: "slot_from_cancel_flow"
+                value: "Yes"
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_pause_subscription"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_pause_subscription"
+
+      - user: "No"
+        assertions:
+          - slot_was_set:
+              - name: "slot_pause_subscription"
+                value: "No"
+          - action_executed: "utter_check_for_promotions"
+          - action_executed: "action_artificial_delay"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_accepted_retention_offer"
+
+      - user: "No, I do not want the promotion"
+        assertions:
+          - action_executed: "utter_cancelled_subscription"
+
+  - test_case: cancel_subscription_accepts_retention_offer_and_confirms_sms
+    steps:
+      - user: "cancel my internet service"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_cancel_subscription"
+          - slot_was_set:
+              - name: "slot_subscription_type"
+              - name: "slot_from_cancel_flow"
+                value: "Yes"
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_pause_subscription"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_pause_subscription"
+
+      - user: "No"
+        assertions:
+          - slot_was_set:
+              - name: "slot_pause_subscription"
+                value: "No"
+          - action_executed: "utter_check_for_promotions"
+          - action_executed: "action_artificial_delay"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_accepted_retention_offer"
+
+      - user: "Yes, I want the promotion"
+        assertions:
+          - action_executed: "utter_send_sms_promo_text"
+          - action_executed: "action_send_sms_promo_text"
+          - bot_uttered:
+              utter_name: "utter_ask_slot_promo_text_received"
+
+      - user: "Yes, I received the text and completed it"
+        assertions:
+          - action_executed: "utter_sms_promo_text_received"
+
+  # -----------------------------
+  # Search and help patterns
+  # -----------------------------
+
+  - test_case: knowledge_question_uses_pattern_search
+    steps:
+      - user: "what is your return policy"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "pattern_search"
+          - action_executed: "utter_few_moments"
+          - action_executed: "action_trigger_search"
+
+  - test_case: help_flow_explains_capabilities
+    steps:
+      - user: "what can you help me with"
+        assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "help"
+          - action_executed: "utter_help"

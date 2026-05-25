@@ -1,0 +1,20 @@
+[
+  {
+    "tag_name": "entity",
+    "ids_to_tags": {
+      "1": "B-store_hours_day",
+      "2": "I-store_hours_day",
+      "3": "L-store_hours_day",
+      "4": "U-store_hours_day",
+      "0": "O"
+    },
+    "tags_to_ids": {
+      "B-store_hours_day": 1,
+      "I-store_hours_day": 2,
+      "L-store_hours_day": 3,
+      "U-store_hours_day": 4,
+      "O": 0
+    },
+    "num_tags": 5
+  }
+]

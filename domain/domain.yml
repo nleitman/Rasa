@@ -1,0 +1,137 @@
+version: "3.1"
+
+entities:
+  - store_hours_day
+  - order_number
+  - subscription_type
+  - cancellation_target
+
+slots:
+  feedback:
+    type: bool
+    mappings:
+      - type: from_llm
+  user_phone:
+    type: text
+    mappings:
+      - type: controlled
+  bot_phone:
+    type: text
+    mappings:
+      - type: controlled
+  user_need_anything_else:
+    type: categorical
+    values:
+      - yes
+      - no
+    mappings:
+      - type: from_llm
+
+  slot_store_hours_day:
+    type: categorical
+    values:
+      - monday
+      - tuesday
+      - wednesday
+      - thursday
+      - friday
+      - saturday
+      - sunday
+    mappings:
+      - type: from_entity
+        entity: store_hours_day
+      - type: from_llm
+
+responses:
+  utter_few_moments:
+    - text: "Please give me a few moments to look into that."
+      metadata:
+        rephrase: True
+        rephrase_prompt: |
+          # Instructions
+          You are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.
+
+          Rephrase the suggested response in a light pirate-like tone.
+
+          # Rules
+          - Maintain the exact same information and meaning as the original
+          - Do not add questions, apologies, or offers not in the original
+          - Preserve the format (statement remains statement, question remains question)
+          - Keep the rephrased version simple and concise
+          - Preserve all values and dates exactly as the original
+          - Vary the wording naturally across interactions
+          - Do not overdo the pirate tone
+
+          # Conversation context
+          {{history}}
+
+          # Current user input
+          {{current_input}}
+
+          Suggested AI Response: {{suggested_response}}
+
+          Rephrased AI Response:
+
+  utter_connect_to_specialist:
+    - text: "Let me connect you to our case managers."
+    - text: "Please hold on, I will connect you to a manager."
+  utter_feedback_success:
+    - text: "Did I manage to take care of everything for you?"
+    - text: "Did I handle everything you needed?"
+  utter_glad_to_help:
+    - text: "I am glad I could help. Have a nice day!"
+    - text: "It was my pleasure to help you. Have a lovely day!"
+
+  utter_callback:
+    - text: "Perhaps, you need further assistance that I might not be able to provide."
+    - text: "You might need extra help that is beyond what I can do."
+
+  utter_extra_chitchat:
+    - text: "I'm not sure about that. I can help you fix an Internet issue or check your bills. What would you need?"
+      metadata:
+        rephrase: True
+        rephrase_prompt: |
+          The following is a conversation with a voice AI assistant for a telecom company.
+          The assistant's goal is to handle wifi troubleshooting and billing inquiries.
+          The assistant's tone of voice is slightly formal, professional, helpful, and empathetic without being overly emotional.
+
+           The user is asking something outside of the assistant's goals, so acknowledge the user's request but suggest to choose something the assistant can help with.
+
+          Rephrase the suggested AI response in a clear and concise language. Maintain the exact same meaning and information. Avoid redundant words and verbosity. Do not make things up.
+
+          Context / previous conversation with the user:
+          {{history}}
+          {{current_input}}
+          Suggested AI Response: {{suggested_response}}
+          Rephrased AI Response:
+
+  utter_free_chitchat_response:
+    - text: "placeholder"
+      metadata:
+        rephrase: True
+        rephrase_prompt: |
+         The following is a conversation with a voice AI assistant for a telecom company.
+          The assistant's goal is to handle wifi troubleshooting and billing inquiries.
+          The assistant's tone of voice is slightly formal, professional, helpful, and empathetic without being overly emotional.
+
+          The user is asking something outside of the assistant's goals, so acknowledge the user's request but suggest to choose something the assistant can help with.
+
+          Rephrase the suggested AI response in a clear and concise language. Maintain the exact same meaning and information. Avoid redundant words and verbosity. Do not make things up.
+
+          Context / previous conversation with the user:
+          {{history}}
+          {{current_input}}
+          Suggested AI Response:
+
+  utter_help:
+    - text: I can help with cancelling a subscription or return any item
+      metadata:
+        rephrase: True
+  utter_ask_user_need_anything_else:
+    - text: "Is there anything else I can help you with before we end our call?"
+  utter_goodbye:
+    - text: "Thank you for calling and have a wonderful day. Goodbye."
+  utter_what_next:
+    - text: "What else can I help you with?"
+  utter_ask_slot_store_hours_day:
+    - text: "Which day do you want store hours for?"

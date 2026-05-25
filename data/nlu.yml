@@ -1,0 +1,269 @@
+version: "3.1"
+
+nlu:
+  - intent: ask_store_hours
+    examples: |
+      - what are your store hours
+      - what are your hours
+      - when are you open
+      - when is the store open
+      - store hours
+      - business hours
+      - what time do you open
+      - what time do you close
+      - can you tell me your hours
+      - tell me your store hours
+      - are you open today
+
+  - intent: ask_store_hours_for_day
+    examples: |
+      - what are your hours on [monday](store_hours_day)
+      - what are your hours on [tuesday](store_hours_day)
+      - what are your hours on [wednesday](store_hours_day)
+      - what are your hours on [thursday](store_hours_day)
+      - what are your hours on [friday](store_hours_day)
+      - what are your hours on [saturday](store_hours_day)
+      - what are your hours on [sunday](store_hours_day)
+      - what are the hours for [monday](store_hours_day)
+      - what are the hours for [tuesday](store_hours_day)
+      - are you open on [friday](store_hours_day)
+      - store hours for [saturday](store_hours_day)
+      - hours on [sunday](store_hours_day)
+      - what are the hours for [Monday]{"entity": "store_hours_day", "value": "monday"}
+      - what are your hours on [Tuesday]{"entity": "store_hours_day", "value": "tuesday"}
+      - are you open on [Wednesday]{"entity": "store_hours_day", "value": "wednesday"}
+      - what time do you close on [Thursday]{"entity": "store_hours_day", "value": "thursday"}
+      - what time do you open on [Friday]{"entity": "store_hours_day", "value": "friday"}
+      - are you open on [Saturday]{"entity": "store_hours_day", "value": "saturday"}
+      - store hours for [Sunday]{"entity": "store_hours_day", "value": "sunday"}
+
+  - intent: check_order_status
+    examples: |
+      - check the status of order [ord123](order_number)
+      - what is the status of order [ord456](order_number)
+      - track order [ord555](order_number)
+      - where is order [ord123](order_number)
+      - can you track order [ord456](order_number)
+      - I want to check order [ord555](order_number)
+      - order status for [ord123](order_number)
+      - status of [ord456](order_number)
+      - please check order [ord123](order_number)
+      - look up order [ord555](order_number)
+      - check my order [ord123](order_number)
+      - what happened with order [ord456](order_number)
+      - can you tell me where order [ord555](order_number) is
+      - is order [ord123](order_number) delivered yet
+      - status for order [abc909](order_number)
+      - check the status of order [abc909](order_number)
+
+  - intent: user_states_order_not_received
+    examples: |
+      - I have not received my order
+      - my order never arrived
+      - I did not get my order
+      - my package has not arrived
+      - where is my order
+      - I am still waiting for my order
+      - I never got my package
+      - my delivery has not shown up
+      - the package never came
+      - I have not gotten my package yet
+      - my order has not arrived yet
+
+  - intent: list_active_orders
+    examples: |
+      - what are my active orders
+      - show me my active orders
+      - list my active orders
+      - do I have any active orders
+      - what orders are currently active
+      - show my current orders
+      - list my current orders
+      - what orders do I have open
+      - show my open orders
+      - list my open orders
+      - show open orders
+      - list open orders
+      - which orders are active
+      - which orders are still open
+      - show orders that are still active
+
+  - intent: return_item
+    examples: |
+      - I want to return an item
+      - I want to return something
+      - I need to return something
+      - I need to return order [ord123](order_number)
+      - I want to return order [ord123](order_number)
+      - I want to return order [ord456](order_number)
+      - return order [ord123](order_number)
+      - return order [ord456](order_number)
+      - help me return order [ord123](order_number)
+      - I need to send back order [ord123](order_number)
+      - I want a refund for order [ord123](order_number)
+      - help me return my item
+      - I need to send an item back
+      - I want to send this back
+      - start a return
+      - help me with a return
+      - I need a return label
+      - can I return this item
+
+  - intent: exchange_item
+    examples: |
+      - I want to exchange an item
+      - I want to exchange order [abc909](order_number)
+      - exchange order [abc909](order_number)
+      - exchange order [ord123](order_number)
+      - I want to exchange order [ord123](order_number)
+      - I need to exchange order [ord456](order_number)
+      - exchange my item from order [ord555](order_number)
+      - I want a different size for order [ord123](order_number)
+      - I need to exchange something
+      - help me exchange my item
+      - exchange my item
+      - I need to swap my item
+      - start an exchange
+      - can I exchange this item
+      - help me with an exchange
+      - I received the wrong size and need an exchange
+
+  - intent: pause_subscription
+    examples: |
+      - I want to pause my [gym membership](subscription_type)
+      - pause my [gym membership](subscription_type)
+      - I want to pause my [internet service](subscription_type)
+      - pause my [internet service](subscription_type)
+      - I want to pause my [meal kit service](subscription_type)
+      - pause my [subscription](subscription_type)
+      - I need to pause my [subscription](subscription_type)
+      - put my [membership](subscription_type) on hold
+
+  - intent: cancel_item
+    examples: |
+      - I want to cancel something
+      - I need to cancel something
+      - cancel something for me
+      - I want to cancel my account
+      - cancel my subscription
+      - cancel my membership
+      - cancel my service
+      - cancel my order
+      - cancel my appointment
+      - cancel my reservation
+      - cancel my delivery
+      - cancel my [gym membership](cancellation_target)
+      - cancel my [internet service](cancellation_target)
+      - cancel my [meal kit service](cancellation_target)
+      - cancel my [subscription box](cancellation_target)
+      - cancel my [order](cancellation_target)
+      - cancel my [appointment](cancellation_target)
+      - cancel my [reservation](cancellation_target)
+      - cancel my [delivery](cancellation_target)
+      - stop my [monthly plan](cancellation_target)
+      - end my [premium membership](cancellation_target)
+
+  - intent: cancel_current_request
+    examples: |
+      - cancel this request
+      - cancel this
+      - stop this request
+      - stop this
+      - never mind
+      - nevermind
+      - forget it
+      - I don't want to continue
+      - I changed my mind
+      - exit this flow
+      - exit
+      - go back
+      - go back to the main menu
+      - main menu
+      - start over
+      - take me back
+      - I don't want to do this anymore
+
+  - intent: ask_help
+    examples: |
+      - what can you help me with
+      - what can you do
+      - help
+      - can you help me
+      - I need help
+      - what are your capabilities
+      - what kinds of things can you help with
+      - tell me what you can help with
+      - how can you help me
+      - what tasks can you help with
+      - what support do you offer
+
+  - intent: knowledge_question
+    examples: |
+      - what is your return policy
+      - what is the return policy
+      - tell me your return policy
+      - how long do I have to return an item
+      - do you accept returns
+      - what is your exchange policy
+      - how do returns work
+      - can I return something after it was delivered
+      - what is the refund policy
+      - do I need a receipt to return something
+      - where can I find the return policy
+      - what are the rules for returns
+      - what is your shipping policy
+      - how does shipping work
+      - what is your cancellation policy
+
+  - intent: out_of_scope
+    examples: |
+      - hello
+      - thanks
+      - goodbye
+      - tell me a joke
+      - what's the weather
+      - who is the president
+      - can you book me a flight
+      - play some music
+      - what is the capital of France
+      - write me a poem
+      - what is two plus two
+      - can you order me food
+      - what is the meaning of life
+      - who won the game last night
+
+  - regex: order_number
+    examples: |
+      - [a-zA-Z]{3}[0-9]{3}
+
+  - lookup: store_hours_day
+    examples: |
+      - monday
+      - tuesday
+      - wednesday
+      - thursday
+      - friday
+      - saturday
+      - sunday
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+      - Sunday
+
+  - lookup: subscription_type
+    examples: |
+      - Gym membership
+      - gym membership
+      - Meal Kit service
+      - meal kit service
+      - Internet service
+      - internet service
+      - Subscription Box
+      - subscription box
+      - subscription boxes
+      - subscription
+      - membership
+      - service

@@ -1,0 +1,12 @@
+.env
+credentials.yml
+.DS_Store
+**/.DS_Store
+.venv/
+__pycache__/
+*.pyc
+.config/
+.keras/
+models/
+validate.log
+git_output

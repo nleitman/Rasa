@@ -1,0 +1,61 @@
+flows:
+#  pattern_chitchat:
+#    description: Flow for the user input that is not related to the purpose of the assistant. It should not respond to greetings or anything defined in another flow.
+#    name: pattern chitchat
+#    steps:
+#      - action: utter_extra_chitchat
+  pattern_search:
+    description: Flow for handling knowledge-based questions
+    name: pattern search
+    steps:
+      - action: utter_few_moments
+#      - action: action_artificial_delay
+#      - action: action_send_sms_promo_text
+      - action: action_trigger_search
+
+#  pattern_session_start:
+#    description: Flow for starting the conversation
+#    name: pattern session start
+#    nlu_trigger:
+#      - intent: session_start
+#    steps:
+#      - action: utter_session_start
+#      - action: action_session_start
+
+  pattern_completed:
+    description: Completion of a user's flow
+    steps:
+      - collect: user_need_anything_else
+        description: Whether the user needs help with anything else. A yes or no response
+        ask_before_filling: True
+        next:
+          - if: slots.user_need_anything_else is 'no'
+            then:
+            - action: utter_goodbye
+            - link: hangup_call
+          - else: ask_what_next
+      - id: ask_what_next
+        action: utter_what_next
+
+#  pattern_collect_information:
+#    description: Flow for collecting information from users
+#    name: pattern collect information
+#    steps:
+#      - id: start
+#        action: action_run_slot_rejections
+#      - action: validate_{{context.collect}}
+#        next:
+#         - if: "slots.{{context.collect}} is not null"
+#          then:
+#            - set_slots:
+#              - already_asked: false
+#              next: END
+#         - else: ask_collect
+#      - id: ask_collect
+#        action: "{{context.utter}}"
+#      - action: "{{context.collect_action}}"
+#      - set_slots:
+#          - already_asked: true
+#      - id: listen
+#        action: action_listen
+#        next: start

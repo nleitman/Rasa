@@ -1,0 +1,848 @@
+test_results:
+
+- name: store_hours_general_question_runs_all_hours_action
+  pass_status: false
+  expected_steps:
+  - user: "what are your store hours"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_get_store_hours"
+    - action_executed: "action_get_all_store_hours"
+    - slot_was_not_set:
+      - name: "slot_store_hours_day"
+    - bot_did_not_utter:
+        utter_name: "utter_ask_slot_store_hours_day"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:30
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 30
+      operator: all
+      flow_ids:
+      - "flow_get_store_hours"
+      type: flow_started
+    error_message: Flow with id 'flow_get_store_hours' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('what are your store hours', 'ask_store_hours_for_day', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold on a tick while I fetch that info, matey!', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031589.8513749)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I’m sorry, but the store hours are not mentioned in the provided documents, so I don’t have that information.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold on a tick while I fetch that info, matey! what are your store hours\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031591.0006645)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031591.0217497)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: store_hours_specific_day_sets_day_slot_and_runs_day_action
+  pass_status: false
+  expected_steps:
+  - user: "what are your hours on monday"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_get_store_hours_for_day"
+    - slot_was_set:
+      - name: "slot_store_hours_day"
+        value: "monday"
+    - action_executed: "action_get_store_hours_for_day"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:44
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 44
+      operator: all
+      flow_ids:
+      - "flow_get_store_hours_for_day"
+      type: flow_started
+    error_message: Flow with id 'flow_get_store_hours_for_day' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - "UserUttered('what are your hours on monday', 'ask_store_hours_for_day', [{\"entity\": \"store_hours_day\", \"start\": 23, \"end\": 29, \"confidence_entity\": 0.7262741923332214, \"value\": \"monday\", \"extractor\": \"DIETClassifier\"}])"
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Give me a moment to check me charts for that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031592.0815284)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I’m sorry, but the provided documents and context do not include information about operating hours on Monday.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Give me a moment to check me charts for that, matey. what are your hours on monday\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031593.1519306)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031593.169729)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: store_hours_specific_day_from_prefilled_context
+  pass_status: false
+  expected_steps:
+  - user: "what are the hours for Monday?"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_get_store_hours_for_day"
+    - slot_was_set:
+      - name: "slot_store_hours_day"
+        value: "monday"
+    - action_executed: "action_get_store_hours_for_day"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:59
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 59
+      operator: all
+      flow_ids:
+      - "flow_get_store_hours_for_day"
+      type: flow_started
+    error_message: Flow with id 'flow_get_store_hours_for_day' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - 'SlotSet(key: slot_store_hours_day, value: monday)'
+    - "UserUttered('what are the hours for Monday?', 'ask_store_hours_for_day', [{\"entity\": \"store_hours_day\", \"start\": 23, \"end\": 29, \"confidence_entity\": 0.7139504551887512, \"value\": \"Monday\", \"extractor\": \"DIETClassifier\"}])"
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold on a tick while I fetch that info for ye.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031594.3343043)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I do not have information about the store hours for Monday in the provided documents or context.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold on a tick while I fetch that info for ye. what are the hours for Monday?\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031595.2311938)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031595.249432)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: check_order_status_in_transit_order
+  pass_status: false
+  expected_steps:
+  - user: "check the status of order ord123"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_check_order_status"
+    - slot_was_set:
+      - name: "slot_order_number"
+        value: "ord123"
+    - action_executed: "utter_order_in_transit"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:76
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 76
+      operator: all
+      flow_ids:
+      - "flow_check_order_status"
+      type: flow_started
+    error_message: Flow with id 'flow_check_order_status' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('check the status of order ord123', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Give me a tick to fetch the details on that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031596.1620667)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I do not have the information needed to check the status of order \"ord123.\" Please provide more details or contact customer support directly for assistance.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Give me a tick to fetch the details on that, matey. check the status of order ord123\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031597.1777084)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031597.1952624)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: check_order_status_delivered_order
+  pass_status: false
+  expected_steps:
+  - user: "what is the status of order ord456"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_check_order_status"
+    - slot_was_set:
+      - name: "slot_order_number"
+        value: "ord456"
+    - action_executed: "utter_order_delivered"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:89
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 89
+      operator: all
+      flow_ids:
+      - "flow_check_order_status"
+      type: flow_started
+    error_message: Flow with id 'flow_check_order_status' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - "UserUttered('what is the status of order ord456', 'out_of_scope', [{\"entity\": \"store_hours_day\", \"start\": 28, \"end\": 34, \"confidence_entity\": 0.5346651077270508, \"value\": \"ord456\", \"extractor\": \"DIETClassifier\"}])"
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold yer horses while I take a gander at that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031598.199449)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I do not have information about the status of order \"ord456\" based on the provided documents or context. Please check your order confirmation email or contact customer support for assistance.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold yer horses while I take a gander at that, matey. what is the status of order ord456\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031599.1881354)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031599.2091906)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: check_order_status_delayed_order
+  pass_status: false
+  expected_steps:
+  - user: "track order ord555"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_check_order_status"
+    - slot_was_set:
+      - name: "slot_order_number"
+        value: "ord555"
+    - action_executed: "utter_order_delayed"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:102
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 102
+      operator: all
+      flow_ids:
+      - "flow_check_order_status"
+      type: flow_started
+    error_message: Flow with id 'flow_check_order_status' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('track order ord555', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold on a tick, matey, while I set me sights on that for ye.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031600.1771572)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I’m sorry, but the provided documents and context do not contain information about tracking orders. I recommend reaching out to customer support or checking your order confirmation email for tracking details.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold on a tick, matey, while I set me sights on that for ye. track order ord555\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031601.3030696)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031601.3240805)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: order_not_received_links_to_check_order_status
+  pass_status: false
+  expected_steps:
+  - user: "I have not received my order"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_user_states_order_not_received"
+    - action_executed: "utter_user_states_order_not_received"
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_check_order_status"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_order_number"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:115
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 115
+      operator: all
+      flow_ids:
+      - "flow_user_states_order_not_received"
+      type: flow_started
+    error_message: Flow with id 'flow_user_states_order_not_received' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('I have not received my order', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold on a tick while I check on that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031602.432339)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I’m sorry, but the provided documents do not contain information about order delivery or tracking. You may need to contact customer support directly for assistance with your order.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold on a tick while I check on that, matey. I have not received my order\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031603.455858)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031603.4915466)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: list_active_orders
+  pass_status: false
+  expected_steps:
+  - user: "what are my active orders"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_list_active_orders"
+    - action_executed: "utter_list_order_numbers"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:131
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 131
+      operator: all
+      flow_ids:
+      - "flow_list_active_orders"
+      type: flow_started
+    error_message: Flow with id 'flow_list_active_orders' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('what are my active orders', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Give me a wee moment to dig into that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031604.4905753)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I do not have information about your active orders based on the provided documents or context. Please check your account or contact customer support for assistance.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Give me a wee moment to dig into that, matey. what are my active orders\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031605.4801128)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031605.4982271)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: return_item_success_with_existing_label
+  pass_status: false
+  expected_steps:
+  - user: "I want to return an item"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_return_item"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_order_number"
+  - user: "ord123"
+    assertions:
+    - slot_was_set:
+      - name: "slot_order_number"
+        value: "ord123"
+      - name: "slot_exchange_order_number"
+        value: "999"
+    - action_executed: "utter_acknowledge_return_request"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_request_exchange_item"
+  - user: "No"
+    assertions:
+    - slot_was_set:
+      - name: "slot_request_exchange_item"
+        value: "No"
+    - action_executed: "utter_confirm_return_requested"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_user_has_return_label"
+  - user: "Yes"
+    assertions:
+    - slot_was_set:
+      - name: "slot_user_has_return_label"
+        value: "Yes"
+    - action_executed: "utter_return_item_instructions"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:145
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 145
+      operator: all
+      flow_ids:
+      - "flow_return_item"
+      type: flow_started
+    error_message: Flow with id 'flow_return_item' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('I want to return an item', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Give me a moment to chart a course for that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031606.4735906)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('You can return an item within 90 days of purchase as long as it is in its original condition and packaging. Returns are free, and a prepaid shipping label will be provided. Let me know if you need help with the process!', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Give me a moment to chart a course for that, matey. I want to return an item\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031607.835538)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031607.8584552)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: return_item_success_needs_label_emailed
+  pass_status: false
+  expected_steps:
+  - user: "I need to return order ord123"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_return_item"
+    - slot_was_set:
+      - name: "slot_order_number"
+        value: "ord123"
+    - action_executed: "utter_acknowledge_return_request"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_request_exchange_item"
+  - user: "No"
+    assertions:
+    - slot_was_set:
+      - name: "slot_request_exchange_item"
+        value: "No"
+    - action_executed: "utter_confirm_return_requested"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_user_has_return_label"
+  - user: "No, I do not have the return label"
+    assertions:
+    - action_executed: "utter_email_label_return_instructions"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:183
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 183
+      operator: all
+      flow_ids:
+      - "flow_return_item"
+      type: flow_started
+    error_message: Flow with id 'flow_return_item' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('I need to return order ord123', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold tight a moment while I check on that for ye.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031615.3842523)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I don’t have information about order ord123 specifically. However, you can return an item within 90 days of purchase as long as it’s in its original condition and packaging. If you need further assistance, please provide more details about the order.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold tight a moment while I check on that for ye. I need to return order ord123\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031616.4651523)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031616.4859273)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: return_item_not_delivered_order_routes_to_handled_question
+  pass_status: false
+  expected_steps:
+  - user: "I want to return order ord456"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_return_item"
+    - slot_was_set:
+      - name: "slot_order_number"
+        value: "ord456"
+    - action_executed: "utter_unable_to_return_not_delivered"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_return_request_handled"
+  - user: "Yes"
+    assertions:
+    - slot_was_set:
+      - name: "slot_return_request_handled"
+        value: "Yes"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_speak_to_human"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:211
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 211
+      operator: all
+      flow_ids:
+      - "flow_return_item"
+      type: flow_started
+    error_message: Flow with id 'flow_return_item' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('I want to return order ord456', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Give me a moment, matey, to check on that for ye.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031624.158832)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('Based on the provided documents, you have up to 90 days from the date of purchase to return an item, as long as it is in its original condition and packaging. If you need further assistance with order \"ord456,\" please provide more details or confirm the purchase date.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Give me a moment, matey, to check on that for ye. I want to return order ord456\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031625.2828047)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031625.3038654)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: return_item_invalid_order_number_rejected
+  pass_status: false
+  expected_steps:
+  - user: "I want to return an item"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_return_item"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_order_number"
+  - user: "my order number is 12345"
+    assertions:
+    - bot_uttered:
+        utter_name: "utter_valid_order_number_syntax"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:234
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 234
+      operator: all
+      flow_ids:
+      - "flow_return_item"
+      type: flow_started
+    error_message: Flow with id 'flow_return_item' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('I want to return an item', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Give me a moment to chart a course for that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031627.1211205)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('You can return an item within 90 days of purchase as long as it is in its original condition and packaging. Returns are free, and a prepaid shipping label will be provided. Let me know if you need help with the process!', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Give me a moment to chart a course for that, matey. I want to return an item\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031628.1840293)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031628.2014308)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: return_item_user_requests_exchange_links_to_exchange_flow
+  pass_status: false
+  expected_steps:
+  - user: "I want to return order ord123"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_return_item"
+    - slot_was_set:
+      - name: "slot_order_number"
+        value: "ord123"
+      - name: "slot_exchange_order_number"
+        value: "999"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_request_exchange_item"
+  - user: "Yes"
+    assertions:
+    - slot_was_set:
+      - name: "slot_request_exchange_item"
+        value: "Yes"
+      - name: "slot_exchange_order_number"
+        value: "ord123"
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_exchange_item"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_reason_for_item_exchange"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:250
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 250
+      operator: all
+      flow_ids:
+      - "flow_return_item"
+      type: flow_started
+    error_message: Flow with id 'flow_return_item' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('I want to return order ord123', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold on a moment while I check on that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031634.260618)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('You have up to 90 days from the date of purchase to return an item, as long as it is in its original condition and packaging. If you need assistance with the return process for order ord123, please let me know.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold on a moment while I check on that, matey. I want to return order ord123\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031635.8245766)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031635.8460608)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: exchange_item_invalid_order_number_rejected
+  pass_status: false
+  expected_steps:
+  - user: "I want to exchange an item"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_exchange_item"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_exchange_order_number"
+  - user: "my order number is bad-order-number"
+    assertions:
+    - bot_uttered:
+        utter_name: "utter_valid_order_number_syntax"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:355
+  assertion_failure:
+    assertion:
+      utter_name: "utter_valid_order_number_syntax"
+      text_matches: null
+      buttons: []
+      line: 355
+      type: bot_uttered
+    error_message: Bot did not utter 'utter_valid_order_number_syntax' response.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('I want to exchange an item', 'out_of_scope', [])
+    - 'FlowStarted(flow: flow_exchange_item)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_slot_exchange_order_number, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('What's the order number for the item you'd like to exchange?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"flow_exchange_item\", \"step_id\": \"flow_exchange_item_0_collect_slot_exchange_order_number\", \"utter_action\": \"utter_ask_slot_exchange_order_number\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"What's the order number for the item you'd like to exchange?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031643.9173934)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+    - UserUttered('my order number is bad-order-number', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_repeat_bot_messages)'
+    - 'ActionExecuted(action: action_repeat_bot_messages, policy: FlowPolicy, confidence: 1.0)'
+    - 'FlowCompleted(flow: pattern_repeat_bot_messages, step_id: pattern_repeat_bot_messages_0_action_repeat_bot_messages)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_slot_exchange_order_number, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('What's the order number for the item you'd like to exchange?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"flow_exchange_item\", \"step_id\": \"flow_exchange_item_0_collect_slot_exchange_order_number\", \"utter_action\": \"utter_ask_slot_exchange_order_number\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"What's the order number for the item you'd like to exchange?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031644.584535)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: pause_subscription_direct_flow
+  pass_status: false
+  expected_steps:
+  - user: "I want to pause my gym membership"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_pause_subscription"
+    - slot_was_set:
+      - name: "slot_subscription_type"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_pause_subscription"
+  - user: "Yes"
+    assertions:
+    - slot_was_set:
+      - name: "slot_pause_subscription"
+        value: "Yes"
+    - action_executed: "utter_subscription_paused"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:407
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 407
+      operator: all
+      flow_ids:
+      - "flow_pause_subscription"
+      type: flow_started
+    error_message: Flow with id 'flow_pause_subscription' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - "UserUttered('I want to pause my gym membership', 'out_of_scope', [{\"entity\": \"store_hours_day\", \"start\": 23, \"end\": 33, \"confidence_entity\": 0.5383543968200684, \"value\": \"membership\", \"extractor\": \"DIETClassifier\"}])"
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold on a moment while I check into that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031647.7827373)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I’m sorry, but I don’t have any information about pausing gym memberships in the provided documents or context. You may need to check directly with your gym for their policies.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold on a moment while I check into that, matey. I want to pause my gym membership\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031648.8669505)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031648.8848035)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: cancel_subscription_declines_pause_and_declines_retention_offer
+  pass_status: false
+  expected_steps:
+  - user: "cancel my gym membership"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_cancel_subscription"
+    - slot_was_set:
+      - name: "slot_subscription_type"
+      - name: "slot_from_cancel_flow"
+        value: "Yes"
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_pause_subscription"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_pause_subscription"
+  - user: "No, I do not want to pause"
+    assertions:
+    - slot_was_set:
+      - name: "slot_pause_subscription"
+        value: "No"
+    - action_executed: "utter_check_for_promotions"
+    - action_executed: "action_artificial_delay"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_accepted_retention_offer"
+  - user: "No, I do not want the promotion"
+    assertions:
+    - action_executed: "utter_cancelled_subscription"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:427
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 427
+      operator: all
+      flow_ids:
+      - "flow_cancel_subscription"
+      type: flow_started
+    error_message: Flow with id 'flow_cancel_subscription' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('cancel my gym membership', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold yer horses while I check into that, matey.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031651.0513783)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I do not have any information in the provided documents or context about canceling a gym membership. Please contact your gym directly for assistance with this request.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold yer horses while I check into that, matey. cancel my gym membership\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031652.0115006)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031652.0326474)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'
+
+- name: cancel_subscription_accepts_retention_offer_and_confirms_sms
+  pass_status: false
+  expected_steps:
+  - user: "cancel my internet service"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_cancel_subscription"
+    - slot_was_set:
+      - name: "slot_subscription_type"
+      - name: "slot_from_cancel_flow"
+        value: "Yes"
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_pause_subscription"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_pause_subscription"
+  - user: "No, I do not want to pause"
+    assertions:
+    - slot_was_set:
+      - name: "slot_pause_subscription"
+        value: "No"
+    - action_executed: "utter_check_for_promotions"
+    - action_executed: "action_artificial_delay"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_accepted_retention_offer"
+  - user: "Yes, I want the promotion"
+    assertions:
+    - slot_was_set:
+      - name: "slot_accepted_retention_offer"
+        value: "Yes"
+    - action_executed: "utter_send_sms_promo_text"
+    - action_executed: "action_send_sms_promo_text"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_promo_text_received"
+  - user: "Yes, I received the text and completed it"
+    assertions:
+    - action_executed: "utter_sms_promo_text_received"
+  error_path: /app/e2e_tests/e2e_test_cases.yml:460
+  assertion_failure:
+    assertion:
+      flow_id: null
+      line: 460
+      operator: all
+      flow_ids:
+      - "flow_cancel_subscription"
+      type: flow_started
+    error_message: Flow with id 'flow_cancel_subscription' did not start.
+    actual_events_transcript:
+    - 'ActionExecuted(action: action_session_start, policy: None, confidence: 1.0)'
+    - 'SessionStarted(type_name: session_started)'
+    - 'ActionExecuted(action: action_listen, policy: None, confidence: None)'
+    - UserUttered('cancel my internet service', 'out_of_scope', [])
+    - 'FlowStarted(flow: pattern_search)'
+    - 'ActionExecuted(action: utter_few_moments, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Hold tight, matey, while I take a gander at that!', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"metadata\": {\"rephrase\": true, \"rephrase_prompt\": \"# Instructions\\nYou are a professional rephrasing assistant. Your only task is to rephrase the suggested response to fit the context of the conversation.\\n\\nRephrase the suggested response in a light pirate-like tone.\\n\\n# Rules\\n- Maintain the exact same information and meaning as the original\\n- Do not add questions, apologies, or offers not in the original\\n- Preserve the format (statement remains statement, question remains question)\\n- Keep the rephrased version simple and concise\\n- Preserve all values and dates exactly as the original\\n- Vary the wording naturally across interactions\\n- Do not overdo the pirate tone\\n\\n# Conversation context\\n{{history}}\\n\\n# Current user input\\n{{current_input}}\\n\\nSuggested AI Response: {{suggested_response}}\\n\\nRephrased AI Response:\\n\"}, \"active_flow\": \"pattern_search\", \"step_id\": \"pattern_search_0_utter_few_moments\", \"utter_action\": \"utter_few_moments\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Please give me a few moments to look into that.\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031654.5901566)"
+    - 'ActionExecuted(action: action_trigger_search, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: action_send_text, policy: EnterpriseSearchPolicy, confidence: 1.0)'
+    - "BotUttered('I’m sorry, but the provided documents and context do not contain information about canceling internet services. Please contact your internet service provider directly for assistance with this request.', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"utter_source\": \"EnterpriseSearchPolicy\", \"search_query\": \"Hold tight, matey, while I take a gander at that! cancel my internet service\", \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031655.6880026)"
+    - 'FlowCompleted(flow: pattern_search, step_id: pattern_search_1_action_trigger_search)'
+    - 'FlowStarted(flow: pattern_completed)'
+    - 'SlotSet(key: user_need_anything_else, value: None)'
+    - 'FlowStarted(flow: pattern_collect_information)'
+    - 'ActionExecuted(action: action_run_slot_rejections, policy: FlowPolicy, confidence: 1.0)'
+    - 'ActionExecuted(action: utter_ask_user_need_anything_else, policy: FlowPolicy, confidence: 1.0)'
+    - "BotUttered('Is there anything else I can help you with before we end our call?', {\"elements\": null, \"quick_replies\": null, \"buttons\": null, \"attachment\": null, \"image\": null, \"custom\": null}, {\"active_flow\": \"pattern_completed\", \"step_id\": \"pattern_completed_0_collect_user_need_anything_else\", \"utter_action\": \"utter_ask_user_need_anything_else\", \"utter_source\": \"ContextualResponseRephraser\", \"domain_ground_truth\": [\"Is there anything else I can help you with before we end our call?\"], \"model_id\": \"6fb1400996f0493e827fd9c54cb167ce\", \"assistant_id\": \"se-take-home-test-2026H1\"}, 1779031655.7089777)"
+    - 'ActionExecuted(action: action_listen, policy: FlowPolicy, confidence: 1.0)'

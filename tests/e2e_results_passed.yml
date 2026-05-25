@@ -1,0 +1,123 @@
+test_results:
+
+- name: exchange_item_success_with_existing_label
+  pass_status: true
+  expected_steps:
+  - user: "I want to exchange an item"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_exchange_item"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_exchange_order_number"
+  - user: "ord123"
+    assertions:
+    - slot_was_set:
+      - name: "slot_exchange_order_number"
+        value: "ord123"
+    - action_executed: "utter_confirm_exchange_item"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_reason_for_item_exchange"
+  - user: "it does not fit"
+    assertions:
+    - slot_was_set:
+      - name: "slot_reason_for_item_exchange"
+    - action_executed: "utter_exchange_reason_thank_you"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_user_has_return_label"
+  - user: "Yes"
+    assertions:
+    - slot_was_set:
+      - name: "slot_user_has_return_label"
+        value: "Yes"
+    - action_executed: "utter_return_item_instructions"
+
+- name: exchange_item_success_needs_label_emailed
+  pass_status: true
+  expected_steps:
+  - user: "exchange order ord123"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_exchange_item"
+    - slot_was_set:
+      - name: "slot_exchange_order_number"
+        value: "ord123"
+    - action_executed: "utter_confirm_exchange_item"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_reason_for_item_exchange"
+  - user: "wrong size"
+    assertions:
+    - slot_was_set:
+      - name: "slot_reason_for_item_exchange"
+    - action_executed: "utter_exchange_reason_thank_you"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_user_has_return_label"
+  - user: "No, I do not have the return label"
+    assertions:
+    - action_executed: "utter_email_label_return_instructions"
+
+- name: exchange_item_unknown_order_offers_specialist
+  pass_status: true
+  expected_steps:
+  - user: "I want to exchange order abc909"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_exchange_item"
+    - slot_was_set:
+      - name: "slot_exchange_order_number"
+        value: "abc909"
+    - action_executed: "utter_order_number_not_found"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_speak_to_human"
+  - user: "Yes"
+    assertions:
+    - slot_was_set:
+      - name: "slot_speak_to_human"
+        value: "Yes"
+    - action_executed: "utter_connect_to_specialist"
+
+- name: exchange_item_prefilled_order_skips_order_number_collection
+  pass_status: true
+  expected_steps:
+  - user: "I want to exchange this item"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "flow_exchange_item"
+    - slot_was_set:
+      - name: "slot_exchange_order_number"
+        value: "ord123"
+    - bot_did_not_utter:
+        utter_name: "utter_ask_slot_exchange_order_number"
+    - action_executed: "utter_confirm_exchange_item"
+    - bot_uttered:
+        utter_name: "utter_ask_slot_reason_for_item_exchange"
+
+- name: knowledge_question_uses_pattern_search
+  pass_status: true
+  expected_steps:
+  - user: "what is your return policy"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "pattern_search"
+    - action_executed: "utter_few_moments"
+    - action_executed: "action_trigger_search"
+
+- name: help_flow_explains_capabilities
+  pass_status: true
+  expected_steps:
+  - user: "what can you help me with"
+    assertions:
+    - flow_started:
+        operator: "all"
+        flow_ids:
+        - "help"
+    - action_executed: "utter_help"

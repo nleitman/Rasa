@@ -1,0 +1,5 @@
+version: "3.1"
+
+responses:
+  utter_schedule_appointment_mcp_unavailable:
+    - text: "I'm sorry, I'm having trouble accessing appointment scheduling right now."

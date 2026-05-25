@@ -1,0 +1,11 @@
+#flows:
+#  flow_schedule_appointment:
+#    name: Schedule appointment
+#    description: >
+#      Help the user schedule, book, or arrange an appointment with a specialist,
+#      doctor, provider, or appointment scheduler. This flow should start when the
+#      user says things like "I want to schedule an appointment with a specialist"
+#      or "book an appointment."
+#    run_pattern_completed: true
+#    steps:
+#      - call: appointment_booking_agent

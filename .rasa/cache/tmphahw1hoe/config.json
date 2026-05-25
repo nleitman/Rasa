@@ -1,0 +1,24 @@
+{
+  "priority": 6,
+  "vector_store": {
+    "type": "faiss",
+    "source": "./docs",
+    "threshold": 0.0
+  },
+  "llm": {
+    "id": "gpt-4o",
+    "models": [
+      {
+        "provider": "openai",
+        "model": "gpt-4o-2024-11-20",
+        "timeout": 30,
+        "temperature": 0.0,
+        "top_p": 0.0
+      }
+    ]
+  },
+  "embeddings": {
+    "provider": "openai",
+    "model": "text-embedding-3-large"
+  }
+}
