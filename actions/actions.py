@@ -1,5 +1,6 @@
 
 import os
+import re
 import time
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
@@ -12,11 +13,6 @@ from pathlib import Path
 
 
 import logging
-
-logger = logging.getLogger(__name__)
-
-import logging
-from rasa_sdk.events import SlotSet, SessionStarted, ActionExecuted
 
 logger = logging.getLogger(__name__)
 
@@ -203,6 +199,89 @@ class ActionGetCancellableItems(Action):
             SlotSet("available_cancellable_items_text", item_text),
         ]
     
+def _normalize_cancellation_target(value: Any) -> Text:
+    """Normalize LLM-extracted cancellation targets.
+
+    The LLM sometimes fills slot_cancellation_target with phrases like
+    "my appointment" or even "I want to cancel my appointment". This helper
+    strips filler words while preserving meaningful words like "internet",
+    "premium", "order", and "appointment".
+    """
+    normalized = str(value or "").lower().strip()
+    normalized = re.sub(r"[^a-z0-9]+", " ", normalized)
+
+    filler_words = {
+        "i",
+        "want",
+        "wanna",
+        "would",
+        "like",
+        "need",
+        "to",
+        "please",
+        "can",
+        "you",
+        "help",
+        "me",
+        "cancel",
+        "cancelling",
+        "cancellation",
+        "stop",
+        "my",
+        "the",
+        "a",
+        "an",
+        "this",
+        "that",
+        "for",
+        "of",
+    }
+
+    words = [word for word in normalized.split() if word not in filler_words]
+    return " ".join(words).strip()
+
+
+def _specific_cancellation_terms(value: Any) -> Text:
+    """Remove generic cancellation words while keeping the specific target.
+
+    Examples:
+      "subscription for internet" -> "internet"
+      "gym membership" -> "gym"
+      "premium membership" -> "premium"
+      "monthly plan" -> "monthly"
+      "subscription" -> "subscription"
+    """
+    normalized = _normalize_cancellation_target(value)
+
+    generic_words = {
+        "subscription",
+        "membership",
+        "service",
+        "plan",
+        "current",
+        "for",
+    }
+
+    words = normalized.split()
+    specific_words = [word for word in words if word not in generic_words]
+
+    if specific_words:
+        return " ".join(specific_words)
+
+    return normalized
+
+
+def _clear_cancellation_resolution() -> List[Dict[Text, Any]]:
+    """Clear resolution slots and route back to clarification."""
+    return [
+        SlotSet("slot_cancellation_target", None),
+        SlotSet("slot_cancellation_type", "needs_clarification"),
+        SlotSet("selected_cancellable_item_id", None),
+        SlotSet("slot_subscription_type", None),
+        SlotSet("slot_cancellation_display_name", None),
+    ]
+
+
 class ActionResolveCancellationTarget(Action):
     def name(self) -> Text:
         return "action_resolve_cancellation_target"
@@ -214,79 +293,253 @@ class ActionResolveCancellationTarget(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
 
-        selected = tracker.get_slot("slot_cancellation_target")
         items = tracker.get_slot("available_cancellable_items") or []
 
-        if not selected:
+        selected = tracker.get_slot("slot_cancellation_target")
+        latest_text = (tracker.latest_message or {}).get("text")
+
+        # Prefer the latest user answer over stale slot values.
+        raw_target = latest_text or selected or ""
+        selected_normalized = _normalize_cancellation_target(raw_target)
+
+        logger.info(
+            f"Resolving cancellation target. selected={selected!r}, "
+            f"latest_text={latest_text!r}, raw_target={raw_target!r}, "
+            f"normalized={selected_normalized!r}"
+        )
+
+        def needs_clarification_events():
             return [
-                SlotSet("slot_cancellation_type", None),
+                SlotSet("slot_cancellation_target", None),
+                SlotSet("slot_cancellation_type", "needs_clarification"),
                 SlotSet("selected_cancellable_item_id", None),
                 SlotSet("slot_subscription_type", None),
+                SlotSet("slot_cancellation_display_name", None),
             ]
 
-        selected_normalized = selected.lower().strip()
+        if not selected_normalized:
+            return needs_clarification_events()
 
-        # Do not treat vague wording as a real cancellable target.
-        vague_targets = {
-            "item",
-            "specific item",
-            "something",
-            "thing",
-            "entire subscription",
-            "my subscription",
-            "subscription",
-            "membership",
-            "service",
+        generic_words = {
+            "item", "specific", "something", "thing", "request",
+            "cancellation", "subscription", "membership", "service",
+            "plan", "current", "for", "of", "my",
         }
 
-        # These are subscription-like words, but if the user only says one of these,
-        # we still want the bot to ask for the actual subscription/service.
-        if selected_normalized in vague_targets:
-            return [
-                SlotSet("slot_cancellation_type", None),
-                SlotSet("selected_cancellable_item_id", None),
-                SlotSet("slot_subscription_type", None),
+        user_tokens = set(selected_normalized.split())
+        specific_tokens = {token for token in user_tokens if token not in generic_words}
+
+        if not specific_tokens and selected_normalized in {
+            "item", "specific item", "something", "thing", "request",
+            "cancellation request", "subscription", "membership",
+            "service", "plan", "current subscription",
+            "my subscription", "my membership",
+        }:
+            logger.info("Cancellation target is vague; asking for clarification.")
+            return needs_clarification_events()
+
+        def normalized_item_name(item):
+            return _normalize_cancellation_target(item.get("name", ""))
+
+        def item_tokens(item):
+            return set(normalized_item_name(item).split())
+
+        def finish_match(matched):
+            logger.info(f"Resolved cancellation target to: {matched}")
+
+            events = [
+                SlotSet("slot_cancellation_target", matched["name"]),
+                SlotSet("slot_cancellation_type", matched["type"]),
+                SlotSet("selected_cancellable_item_id", matched["id"]),
+                SlotSet("slot_cancellation_display_name", matched["name"]),
             ]
 
-        # Aliases let natural descriptions resolve to demo items.
-        aliases = {
+            if matched["type"] == "subscription":
+                events.append(SlotSet("slot_subscription_type", matched["name"]))
+            else:
+                events.append(SlotSet("slot_subscription_type", None))
+
+            return events
+
+        alias_to_item_name = {
             "gym": "gym membership",
             "gym membership": "gym membership",
             "internet": "internet service",
             "internet service": "internet service",
             "wifi": "internet service",
+            "wi fi": "internet service",
+            "meal": "meal kit service",
             "meal kit": "meal kit service",
             "meal kit service": "meal kit service",
+            "box": "subscription box",
             "subscription box": "subscription box",
+            "monthly": "monthly plan",
             "monthly plan": "monthly plan",
+            "premium": "premium membership",
             "premium membership": "premium membership",
+            "appt": "appointment on friday",
+            "appointment": "appointment on friday",
+            "friday": "appointment on friday",
+            "appointment friday": "appointment on friday",
+            "friday appointment": "appointment on friday",
+            "visit": "appointment on friday",
+            "session": "appointment on friday",
         }
 
-        normalized_target = aliases.get(selected_normalized, selected_normalized)
+        alias_target = alias_to_item_name.get(selected_normalized)
 
-        matches = [
-            item for item in items
-            if item["name"].lower().strip() == normalized_target
-            or normalized_target in item["name"].lower().strip()
-            or item["name"].lower().strip() in normalized_target
-        ]
+        if not alias_target and specific_tokens:
+            specific_phrase = " ".join(
+                token for token in selected_normalized.split()
+                if token not in generic_words
+            )
+            alias_target = alias_to_item_name.get(specific_phrase)
 
-        if not matches:
-            return [
-                SlotSet("slot_cancellation_type", None),
-                SlotSet("selected_cancellable_item_id", None),
-                SlotSet("slot_subscription_type", None),
+        if alias_target:
+            for item in items:
+                if normalized_item_name(item) == alias_target:
+                    return finish_match(item)
+
+        if user_tokens & {"appointment", "appt", "friday", "visit", "session"}:
+            appointment_matches = [
+                item for item in items
+                if str(item.get("type", "")).lower() == "appointment"
+                or "appointment" in str(item.get("name", "")).lower()
             ]
 
-        matched = matches[0]
+            if len(appointment_matches) == 1:
+                return finish_match(appointment_matches[0])
 
-        events = [
-            SlotSet("slot_cancellation_target", matched["name"]),
-            SlotSet("slot_cancellation_type", matched["type"]),
-            SlotSet("selected_cancellable_item_id", matched["id"]),
+            return needs_clarification_events()
+
+        digits = set(re.findall(r"\d+", selected_normalized))
+        if "order" in user_tokens or digits:
+            order_matches = [
+                item for item in items
+                if str(item.get("type", "")).lower() == "order"
+            ]
+
+            for item in order_matches:
+                item_digits = set(re.findall(r"\d+", str(item.get("name", ""))))
+                if digits and digits & item_digits:
+                    return finish_match(item)
+
+        scored = []
+
+        for item in items:
+            tokens = item_tokens(item)
+            overlap = specific_tokens & tokens
+
+            item_normalized = normalized_item_name(item)
+            normalized_contains = (
+                selected_normalized == item_normalized
+                or selected_normalized in item_normalized
+                or item_normalized in selected_normalized
+            )
+
+            score = len(overlap)
+
+            if normalized_contains:
+                score += 10
+
+            if score > 0:
+                scored.append((score, item))
+
+        if not scored:
+            logger.info("No cancellable item matched; asking for clarification.")
+            return needs_clarification_events()
+
+        scored.sort(key=lambda pair: pair[0], reverse=True)
+
+        if len(scored) == 1 or scored[0][0] > scored[1][0]:
+            return finish_match(scored[0][1])
+
+        logger.info(f"Ambiguous cancellation target matches: {scored}")
+        return needs_clarification_events()
+
+
+class ActionContinueInterruptedFlow(Action):
+    def name(self) -> Text:
+        return "action_continue_interrupted_flow"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        logger.info("=== ENTERED action_continue_interrupted_flow ===")
+        return []
+
+
+class ActionPrepareCancellationConfirmation(Action):
+    def name(self) -> Text:
+        return "action_prepare_cancellation_confirmation"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        vague_targets = {
+            "subscription",
+            "membership",
+            "service",
+            "plan",
+            "item",
+            "something",
+            "thing",
+            "request",
+            "cancellation request",
+        }
+
+        items = tracker.get_slot("available_cancellable_items") or []
+
+        candidates = [
+            tracker.get_slot("slot_cancellation_target"),
+            tracker.get_slot("slot_subscription_type"),
         ]
 
-        if matched["type"] == "subscription":
-            events.append(SlotSet("slot_subscription_type", matched["name"]))
+        latest_text = (tracker.latest_message or {}).get("text")
+        if latest_text:
+            candidates.append(latest_text)
 
-        return events
+        display_name = None
+
+        for value in candidates:
+            normalized = _normalize_cancellation_target(value)
+            if not normalized or normalized in vague_targets:
+                continue
+
+            # Prefer the clean item name from the available items list.
+            for item in items:
+                item_name = str(item.get("name", "")).strip()
+                item_normalized = _normalize_cancellation_target(item_name)
+
+                if (
+                    normalized == item_normalized
+                    or normalized in item_normalized
+                    or item_normalized in normalized
+                ):
+                    display_name = item_name
+                    break
+
+            if display_name:
+                break
+
+            display_name = normalized
+            break
+
+        if not display_name:
+            display_name = "this item"
+
+        logger.info(f"Prepared cancellation display name: {display_name}")
+
+        return [
+            SlotSet("slot_cancellation_display_name", display_name),
+            SlotSet("slot_from_cancel_flow", "Yes"),
+            SlotSet("slot_confirmed", None),
+            SlotSet("slot_user_wants_promo", None),
+        ]

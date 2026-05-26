@@ -126,14 +126,22 @@ nlu:
 
   - intent: exchange_item
     examples: |
-      - I want to exchange an item
-      - I want to exchange order [abc909](order_number)
-      - exchange order [abc909](order_number)
       - exchange order [ord123](order_number)
+      - exchange order [ord456](order_number)
+      - exchange order [ord555](order_number)
+      - exchange order [abc909](order_number)
       - I want to exchange order [ord123](order_number)
+      - I want to exchange order [abc909](order_number)
       - I need to exchange order [ord456](order_number)
+      - please exchange order [ord123](order_number)
+      - start an exchange for order [ord123](order_number)
+      - help me exchange order [ord123](order_number)
       - exchange my item from order [ord555](order_number)
+      - swap the item from order [ord123](order_number)
       - I want a different size for order [ord123](order_number)
+      - I ordered the wrong size for order [ord123](order_number)
+      - I received the wrong size and need an exchange
+      - I want to exchange an item
       - I need to exchange something
       - help me exchange my item
       - exchange my item
@@ -141,7 +149,6 @@ nlu:
       - start an exchange
       - can I exchange this item
       - help me with an exchange
-      - I received the wrong size and need an exchange
 
   - intent: pause_subscription
     examples: |
@@ -167,25 +174,10 @@ nlu:
       - cancel my appointment
       - cancel my reservation
       - cancel my delivery
-      - cancel my [subscription](cancellation_target)
-      - cancel my [membership](cancellation_target)
-      - cancel my [service](cancellation_target)
-      - cancel my [gym membership](cancellation_target)
-      - cancel my [internet service](cancellation_target)
-      - I want to cancel my [internet service](cancellation_target)
-      - please cancel my [internet service](cancellation_target)
-      - cancel my [meal kit service](cancellation_target)
-      - cancel my [subscription box](cancellation_target)
       - cancel my [order](cancellation_target)
       - cancel my [appointment](cancellation_target)
       - cancel my [reservation](cancellation_target)
       - cancel my [delivery](cancellation_target)
-      - stop my [monthly plan](cancellation_target)
-      - end my [premium membership](cancellation_target)
-      - terminate my [internet service](cancellation_target)
-      - discontinue my [internet service](cancellation_target)
-      - shut off my [internet service](cancellation_target)
-      - stop my [internet service](cancellation_target)
 
   - intent: cancel_current_request
     examples: |
@@ -299,7 +291,21 @@ nlu:
       - subscription box
       - monthly plan
       - premium membership
-      - order
-      - appointment
-      - reservation
-      - delivery
+
+  - intent: cancel_subscription
+    examples: |
+      - cancel internet service
+      - cancel meal kit service
+      - cancel subscription
+      - cancel my subscription
+      - cancel my current subscription
+      - cancel membership
+      - cancel my membership
+      - cancel gym membership
+      - cancel my gym membership
+      - cancel premium membership
+      - cancel my premium membership
+      - cancel service
+      - cancel my service
+      - cancel my plan
+      - cancel monthly plan

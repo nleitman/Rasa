@@ -1,38 +1,47 @@
 version: '3.1'
 actions:
+- action_continue_interrupted_flow
 - action_send_sms_promo_text
+- action_prepare_cancellation_confirmation
+- action_session_start
 - action_artificial_delay
 - action_get_all_store_hours
 - action_get_store_hours_for_day
-- action_continue_interrupted_flow
-- action_session_start
 - action_get_cancellable_items
 - action_resolve_cancellation_target
-- action_send_sms_promo_text
-
 intents:
-  - ask_store_hours
-  - ask_store_hours_for_day
-  - check_order_status
-  - user_states_order_not_received
-  - list_active_orders
-  - return_item
-  - exchange_item
-  - pause_subscription
-  - ask_help
-  - knowledge_question
-  - out_of_scope
-  - cancel_item
-  - cancel_current_request
-
+- ask_store_hours
+- ask_store_hours_for_day
+- check_order_status
+- user_states_order_not_received
+- list_active_orders
+- return_item
+- exchange_item
+- pause_subscription
+- ask_help
+- knowledge_question
+- out_of_scope
+- cancel_item
+- cancel_subscription
+- cancel_current_request
 responses:
+  utter_ask_slot_confirmed:
+  - text: To ensure I understand correctly, are you requesting to cancel your {slot_cancellation_display_name}?
+  utter_offer_subscription_promo:
+  - text: Before we continue, I found a promotional offer for your {slot_cancellation_display_name}.
+  utter_ask_slot_user_wants_promo:
+  - text: Before we cancel your {slot_cancellation_display_name}, we have a special
+      offer of 20% off your current monthly price for 3 months. Would you like to
+      accept this promotional offer?
   utter_acknowledge_return_request:
-  - text: |-
-      Got it. You'd like to return your item, I can help with that.
+  - text: 'Got it. You''d like to return your item, I can help with that.
 
-      Just so you know, if the wrong item or size was sent, we do offer free exchanges in case that works better for you.
+
+      Just so you know, if the wrong item or size was sent, we do offer free exchanges
+      in case that works better for you.'
   utter_ask_slot_accepted_retention_offer:
-  - text: We have a special offer of 20% off your current monthly price for 3 months, would you like to take advantage of this special pricing?
+  - text: We have a special offer of 20% off your current monthly price for 3 months,
+      would you like to take advantage of this special pricing?
   utter_ask_slot_exchange_order_number:
   - text: What's the order number for the item you'd like to exchange?
   utter_ask_slot_order_number:
@@ -40,29 +49,23 @@ responses:
   - text: What's the order number your looking for?
   - text: What's the order number for the item you're asking about?
   utter_ask_slot_pause_subscription:
-  - text: Just to clarify, are you looking to cancel your current {slot_subscription_type} subscription?
+  - text: Just to clarify, are you looking to cancel your current {slot_subscription_type}
+      subscription?
     metadata:
       rephrase: true
-#    buttons:
-#    - title: No
-#      payload: No
-#    - title: Yes
-#      payload: Yes
-  - text: Would it make sense to pause your {slot_subscription_type} for 2 months instead of canceling?
-#    buttons:
-#    - title: Yes
-#      payload: Yes
-#    - title: No
-#      payload: No
+  - text: Would it make sense to pause your {slot_subscription_type} for 2 months
+      instead of canceling?
     condition:
     - type: slot
       name: slot_from_cancel_flow
-      value: Yes
+      value: true
   utter_ask_slot_promo_text_received:
-  - text: Just checking, did you get the text with the link, and were you able to complete it?
+  - text: Just checking, did you get the text with the link, and were you able to
+      complete it?
   - text: Were you able to review and agree to the terms in the link I sent?
   utter_ask_slot_reason_for_item_exchange:
-  - text: To make sure we get everything right, what's the reason you'd like to exchange the item?
+  - text: To make sure we get everything right, what's the reason you'd like to exchange
+      the item?
   utter_ask_slot_request_exchange_item:
   - text: Would you like to exchange your item?
   utter_ask_slot_return_request_handled:
@@ -71,22 +74,18 @@ responses:
   - text: Would you like to speak to a live representative?
   utter_ask_slot_subscription_type:
   - text: Can you tell me which subscription this is for?
-#    buttons:
-#    - title: Gym
-#      payload: Gym membership
-#    - title: Meal Kits
-#      payload: Meal Kit service
-#    - title: Internet
-#      payload: Internet service
-#    - title: Subscription Box
-#      payload: Subscription Box
   utter_ask_slot_user_has_return_label:
   - text: Do you have the prepaid return label that was included with your order?
   - text: Do you still have the prepaid return label that came with the package?
   utter_cancelled_subscription:
-  - text: Understood. Your subscription has been cancelled.
+  - text: Understood. Your {slot_cancellation_display_name} has been cancelled.
+  utter_cancelled_appointment:
+  - text: Understood. Your appointment has been cancelled.
+  utter_cancelled_order:
+  - text: Understood. Your order has been cancelled.
   utter_check_for_promotions:
-  - text: Let me check real quick to see if there are any promos you could take advantage of.
+  - text: Let me check real quick to see if there are any promos you could take advantage
+      of.
     metadata:
       rephrase: true
   utter_confirm_exchange_item:
@@ -96,11 +95,14 @@ responses:
   utter_confirm_return_requested:
   - text: Understood. I will help you with the return process now.
   utter_email_label_return_instructions:
-  - text: No problem. I'll email you a new prepaid return label to the email address used with your order. Just print it, attach it to your package, and drop it off at your nearest return location.
+  - text: No problem. I'll email you a new prepaid return label to the email address
+      used with your order. Just print it, attach it to your package, and drop it
+      off at your nearest return location.
     metadata:
       rephrase: true
   utter_exchange_reason_thank_you:
-  - text: Thank you for that information. I have automatically noted "{slot_reason_for_item_exchange}" in your order and you can return the item for a replacement.
+  - text: Thank you for that information. I have automatically noted "{slot_reason_for_item_exchange}"
+      in your order and you can return the item for a replacement.
   utter_human_handoff_override:
   - text: Thank you. I am transferring your to a live representative now...
     metadata:
@@ -108,60 +110,84 @@ responses:
   utter_list_order_numbers:
   - text: 'Based on your phone number, I found three orders: ord123, ord456, and ord555.'
   utter_order_delayed:
-  - text: This order has experienced a delay due to weather. Unfortunately, we do not currently have an expected time of arrival.
+  - text: This order has experienced a delay due to weather. Unfortunately, we do
+      not currently have an expected time of arrival.
   utter_order_delivered:
   - text: This order shows the package marked as delivered.
   utter_order_in_transit:
-  - text: This order has left the warehouse and is on its way to your delivery address. It will arrive tomorrow.
+  - text: This order has left the warehouse and is on its way to your delivery address.
+      It will arrive tomorrow.
   utter_order_number_not_found:
   - text: Hmm, I couldn't find that order number.
   - text: I didn't find a match for order number {slot_order_number}.
   - text: I'm not seeing anything for order number {slot_order_number}.
   - text: I'm unable to find order number {slot_order_number} in our system.
   utter_return_item_instructions:
-  - text: Great. You can use that label to send the item back. Just drop it off at your nearest mail carrier when you're ready.
-  - text: Perfect. Go ahead and attach the label to your package and drop it off at your nearest return location.
+  - text: Great. You can use that label to send the item back. Just drop it off at
+      your nearest mail carrier when you're ready.
+  - text: Perfect. Go ahead and attach the label to your package and drop it off at
+      your nearest return location.
   utter_send_sms_promo_text:
-  - text: Great. I will text you a link with the promotion details that you can review and sign.
+  - text: Great. I will text you a link with the promotion details that you can review
+      and sign.
   utter_session_start:
   - text: Welcome to Rasa Market, my name is Zoey. How may I help you today?
   utter_sms_promo_text_not_received:
-  - text: I'm sorry that didn't seem to work. Let me transfer you to a representative to further assist.
-  - text: Understood. I'll connect you to a representative to get that taken care of for you.
+  - text: I'm sorry that didn't seem to work. Let me transfer you to a representative
+      to further assist.
+  - text: Understood. I'll connect you to a representative to get that taken care
+      of for you.
   utter_sms_promo_text_received:
   - text: Great, thanks for confirming.
   - text: Perfect, glad it came through.
   utter_subscription_paused:
-  - text: Understood. Your {slot_subscription_type} has been paused for 2 months. There is no charge for this.
-  - text: Great. Your {slot_subscription_type} has been paused for 2 months. There is no charge for this.
+  - text: Understood. Your {slot_subscription_type} has been paused for 2 months.
+      There is no charge for this.
+  - text: Great. Your {slot_subscription_type} has been paused for 2 months. There
+      is no charge for this.
     condition:
     - type: slot
       name: slot_from_cancel_flow
-      value: Yes
+      value: true
   utter_unable_to_return_not_delivered:
-  - text: This order hasn't been delivered yet. Once it arrives, you'll get a prepaid return label you can use to send the item back.
+  - text: This order hasn't been delivered yet. Once it arrives, you'll get a prepaid
+      return label you can use to send the item back.
   utter_user_states_order_not_received:
-  - text: Sorry your order hasn't arrived yet. Sometimes unexpected delays can happen during processing or delivery. Let me check on that for you.
+  - text: Sorry your order hasn't arrived yet. Sometimes unexpected delays can happen
+      during processing or delivery. Let me check on that for you.
   utter_valid_order_number_syntax:
-  - text: That doesn't seem to be a valid order number. Order numbers start with 3 letters and end with 3 numbers.
-
+  - text: That doesn't seem to be a valid order number. Order numbers start with 3
+      letters and end with 3 numbers.
   utter_ask_slot_cancellation_target:
-    - text: "What would you like to cancel?"
-
+  - text: 'Which item would you like to cancel? You can choose: {available_cancellable_items_text}.'
   utter_cancellation_target_not_found:
-    - text: "I couldn't find that item on your account. Please choose one of these: {available_cancellable_items_text}. You can also say 'cancel this request' to stop."
-
+  - text: 'I need the specific item to cancel. You can choose: {available_cancellable_items_text}.'
   utter_main_menu:
-    - text: "Main menu: you can check store hours, manage an order, pause or cancel a subscription, or ask for help."
-
+  - text: 'Main menu: you can check store hours, manage an order, pause or cancel
+      a subscription, or ask for help.'
 slots:
+  slot_cancellation_display_name:
+    type: text
+    mappings:
+    - type: custom
+  slot_confirmed:
+    type: bool
+    mappings:
+    - type: from_llm
+  slot_user_wants_promo:
+    type: categorical
+    values:
+    - 'Yes'
+    - 'No'
+    mappings:
+    - type: from_llm
   slot_accepted_retention_offer:
     type: categorical
     mappings:
     - type: from_llm
     values:
-    - Yes
-    - No
+    - true
+    - false
   slot_exchange_order_number:
     type: text
     mappings:
@@ -173,8 +199,8 @@ slots:
     mappings:
     - type: from_llm
     values:
-    - Yes
-    - No
+    - true
+    - false
   slot_order_number:
     type: text
     mappings:
@@ -186,15 +212,15 @@ slots:
     mappings:
     - type: from_llm
     values:
-    - Yes
-    - No
+    - 'Yes'
+    - 'No'
   slot_promo_text_received:
     type: categorical
     mappings:
     - type: from_llm
     values:
-    - Yes
-    - No
+    - true
+    - false
   slot_reason_for_item_exchange:
     type: text
     mappings:
@@ -204,22 +230,22 @@ slots:
     mappings:
     - type: from_llm
     values:
-    - Yes
-    - No
+    - 'Yes'
+    - 'No'
   slot_return_request_handled:
     type: categorical
     mappings:
     - type: from_llm
     values:
-    - Yes
-    - No
+    - 'Yes'
+    - 'No'
   slot_speak_to_human:
     type: categorical
     mappings:
     - type: from_llm
     values:
-    - Yes
-    - No
+    - 'Yes'
+    - 'No'
   slot_subscription_type:
     type: text
     mappings:
@@ -230,36 +256,30 @@ slots:
     mappings:
     - type: from_llm
     values:
-    - Yes
-    - No
-
+    - 'Yes'
+    - 'No'
   slot_cancellation_target:
     type: text
     mappings:
-      - type: from_entity
-        entity: cancellation_target
-      - type: from_llm
-
+    - type: from_entity
+      entity: cancellation_target
+    - type: from_llm
   slot_cancellation_type:
     type: text
     mappings:
-      - type: custom
-
+    - type: custom
   available_cancellable_items:
     type: any
     mappings:
-      - type: custom
-
+    - type: custom
   available_cancellable_items_text:
     type: text
     mappings:
-      - type: custom
-
+    - type: custom
   selected_cancellable_item_id:
     type: text
     mappings:
-      - type: custom
-
+    - type: custom
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
