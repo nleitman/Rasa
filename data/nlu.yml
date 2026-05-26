@@ -14,6 +14,21 @@ nlu:
       - can you tell me your hours
       - tell me your store hours
       - are you open today
+      - what are the store hours
+      - what are your business hours
+      - what time is the store open
+      - what time is the store closed
+      - what are your opening hours
+      - what are your operating hours
+      - when does the store open
+      - when does the store close
+      - when do you close
+      - when do you open
+      - what are the shop hours
+      - when is the shop open
+      - hours of operation
+      - operating hours
+      - opening hours
 
   - intent: ask_store_hours_for_day
     examples: |
@@ -138,9 +153,11 @@ nlu:
       - pause my [subscription](subscription_type)
       - I need to pause my [subscription](subscription_type)
       - put my [membership](subscription_type) on hold
+      - temporarily pause my [internet service](subscription_type)
+      - temporarily pause my [gym membership](subscription_type)
+      - suspend my [subscription](subscription_type) for now
+      - put my [internet service](subscription_type) on hold
 
-  - intent: cancel_item
-    examples: |
   - intent: cancel_item
     examples: |
       - I want to cancel something
@@ -155,6 +172,8 @@ nlu:
       - cancel my [service](cancellation_target)
       - cancel my [gym membership](cancellation_target)
       - cancel my [internet service](cancellation_target)
+      - I want to cancel my [internet service](cancellation_target)
+      - please cancel my [internet service](cancellation_target)
       - cancel my [meal kit service](cancellation_target)
       - cancel my [subscription box](cancellation_target)
       - cancel my [order](cancellation_target)
@@ -163,6 +182,10 @@ nlu:
       - cancel my [delivery](cancellation_target)
       - stop my [monthly plan](cancellation_target)
       - end my [premium membership](cancellation_target)
+      - terminate my [internet service](cancellation_target)
+      - discontinue my [internet service](cancellation_target)
+      - shut off my [internet service](cancellation_target)
+      - stop my [internet service](cancellation_target)
 
   - intent: cancel_current_request
     examples: |
@@ -262,9 +285,21 @@ nlu:
       - meal kit service
       - Internet service
       - internet service
-      - Subscription Box
-      - subscription box
-      - subscription boxes
+      - subscription
+      - membership
+
+  - lookup: cancellation_target
+    examples: |
       - subscription
       - membership
       - service
+      - gym membership
+      - internet service
+      - meal kit service
+      - subscription box
+      - monthly plan
+      - premium membership
+      - order
+      - appointment
+      - reservation
+      - delivery

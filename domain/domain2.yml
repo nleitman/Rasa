@@ -223,7 +223,8 @@ slots:
   slot_subscription_type:
     type: text
     mappings:
-      - type: from_llm
+    - type: from_entity
+      entity: subscription_type
   slot_user_has_return_label:
     type: categorical
     mappings:

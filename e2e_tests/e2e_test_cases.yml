@@ -413,10 +413,14 @@ test_cases:
                 value: "Yes"
           - action_executed: "utter_subscription_paused"
 
-  - test_case: cancel_subscription_declines_pause_and_declines_retention_offer
+  - test_case: cancel_subscription_declines_retention_offer
     steps:
       - user: "cancel my gym membership"
         assertions:
+          - flow_started:
+              operator: "all"
+              flow_ids:
+                - "flow_cancel_item"
           - flow_started:
               operator: "all"
               flow_ids:
@@ -425,18 +429,6 @@ test_cases:
               - name: "slot_subscription_type"
               - name: "slot_from_cancel_flow"
                 value: "Yes"
-          - flow_started:
-              operator: "all"
-              flow_ids:
-                - "flow_pause_subscription"
-          - bot_uttered:
-              utter_name: "utter_ask_slot_pause_subscription"
-
-      - user: "No"
-        assertions:
-          - slot_was_set:
-              - name: "slot_pause_subscription"
-                value: "No"
           - action_executed: "utter_check_for_promotions"
           - action_executed: "action_artificial_delay"
           - bot_uttered:
@@ -444,6 +436,9 @@ test_cases:
 
       - user: "No, I do not want the promotion"
         assertions:
+          - slot_was_set:
+              - name: "slot_accepted_retention_offer"
+                value: "No"
           - action_executed: "utter_cancelled_subscription"
 
   - test_case: cancel_subscription_accepts_retention_offer_and_confirms_sms
@@ -453,23 +448,15 @@ test_cases:
           - flow_started:
               operator: "all"
               flow_ids:
+                - "flow_cancel_item"
+          - flow_started:
+              operator: "all"
+              flow_ids:
                 - "flow_cancel_subscription"
           - slot_was_set:
               - name: "slot_subscription_type"
               - name: "slot_from_cancel_flow"
                 value: "Yes"
-          - flow_started:
-              operator: "all"
-              flow_ids:
-                - "flow_pause_subscription"
-          - bot_uttered:
-              utter_name: "utter_ask_slot_pause_subscription"
-
-      - user: "No"
-        assertions:
-          - slot_was_set:
-              - name: "slot_pause_subscription"
-                value: "No"
           - action_executed: "utter_check_for_promotions"
           - action_executed: "action_artificial_delay"
           - bot_uttered:
@@ -477,6 +464,9 @@ test_cases:
 
       - user: "Yes, I want the promotion"
         assertions:
+          - slot_was_set:
+              - name: "slot_accepted_retention_offer"
+                value: "Yes"
           - action_executed: "utter_send_sms_promo_text"
           - action_executed: "action_send_sms_promo_text"
           - bot_uttered:
@@ -484,6 +474,9 @@ test_cases:
 
       - user: "Yes, I received the text and completed it"
         assertions:
+          - slot_was_set:
+              - name: "slot_promo_text_received"
+                value: "Yes"
           - action_executed: "utter_sms_promo_text_received"
 
   # -----------------------------

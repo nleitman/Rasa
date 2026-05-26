@@ -23,7 +23,20 @@ flows:
       action: action_get_all_store_hours
   flow_get_store_hours_for_day:
     name: Get store hours for a specific day
-    description: Use this when the user asks for store hours on a specific weekday. Extract the weekday into slot_store_hours_day and normalize it to one of monday, tuesday, wednesday, thursday, friday, saturday, or sunday.
+    description: |
+      Use this flow only when the user asks for store hours for a specific weekday
+      or provides a specific day such as monday, tuesday, wednesday, thursday,
+      friday, saturday, or sunday.
+
+      Examples:
+        - What are your hours on Monday?
+        - Are you open on Saturday?
+        - What time do you close on Friday?
+        - Sunday store hours
+
+      Do not use this flow for general store hours questions.
+      Do not use this flow for "what are your store hours" unless the user
+      specifies a particular day.
     nlu_trigger:
     - intent:
         name: ask_store_hours_for_day
@@ -41,7 +54,19 @@ flows:
       action: action_get_store_hours_for_day
   flow_check_order_status:
     name: Check order status
-    description: This flow assists users in checking the status of their order. It asks for the order number and provides real-time tracking updates, delivery progress, or any known delays.
+    description: |
+      Use this flow when the user wants to track an order, check an order status,
+      check delivery status, or asks where a specific order is.
+
+      Use this flow especially when the user provides an order number.
+
+      Examples:
+      - track order ord555
+      - track my order
+      - check status for order ord555
+      - where is my order ord555?
+      - has order ord555 shipped?
+      - when will my order arrive?
     run_pattern_completed: true
     steps:
     - id: flow_check_order_status_0_collect_slot_order_number
@@ -98,7 +123,18 @@ flows:
         confidence_threshold: 0.0
   flow_list_active_orders:
     name: Active order numbers
-    description: Handles user requests to list their current or recent orders.
+    description:  |
+      Use this flow only when the user asks to list, show, or view all active orders associated with their account or phone number.
+
+      Examples:
+      - What orders do I have?
+      - Show my active orders
+      - List my orders
+      - Do I have any open orders?
+
+      Do not use this flow when the user wants to track a specific order.
+      Do not use this flow when the user gives an order number.
+      Do not use this flow when the user wants to return, exchange, cancel, or report a problem with an order.
     run_pattern_completed: true
     steps:
     - id: flow_list_active_orders_0_utter_list_order_numbers
@@ -110,7 +146,17 @@ flows:
         confidence_threshold: 0.0
   flow_return_item:
     name: Return an item
-    description: This flow assists users with returning an item from a previous order. It gathers the order number and the item to be returned, asks for a return reason, and provides next steps based on the store's return policy and timeframe.
+    description: |
+      Use this flow when the user wants to return an item or return an order.
+
+      Use this flow especially when the user says return and provides an order number.
+
+      Examples:
+      - I want to return order ord456
+      - return order ord456
+      - I need to return something
+      - I want to return my item
+      - can I return this order?
     persisted_slots:
     - slot_exchange_order_number
     run_pattern_completed: true
