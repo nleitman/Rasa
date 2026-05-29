@@ -54,6 +54,18 @@ nlu:
 
   - intent: check_order_status
     examples: |
+      - order status
+      - check order status
+      - check my order status
+      - status of my order
+      - I want to check my order status
+      - can you check the status of my order
+      - track my order
+      - track my package
+      - delivery status
+      - shipping status
+      - has my order shipped
+      - is my order delivered yet
       - check the status of order [ord123](order_number)
       - what is the status of order [ord456](order_number)
       - track order [ord555](order_number)
@@ -294,18 +306,6 @@ nlu:
 
   - intent: cancel_subscription
     examples: |
-      - cancel internet service
-      - cancel meal kit service
       - cancel subscription
       - cancel my subscription
       - cancel my current subscription
-      - cancel membership
-      - cancel my membership
-      - cancel gym membership
-      - cancel my gym membership
-      - cancel premium membership
-      - cancel my premium membership
-      - cancel service
-      - cancel my service
-      - cancel my plan
-      - cancel monthly plan

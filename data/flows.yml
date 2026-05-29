@@ -13,8 +13,7 @@ flows:
         confidence_threshold: 0.0
   flow_get_store_hours:
     name: Get all store hours
-    description: Use this when the user asks for store hours in general and does not
-      specify a particular day.
+    description: Use this when the user asks for store hours in general and does not specify a particular day.
     nlu_trigger:
     - intent:
         name: ask_store_hours
@@ -24,9 +23,7 @@ flows:
       action: action_get_all_store_hours
   flow_get_store_hours_for_day:
     name: Get store hours for a specific day
-    description: Use this when the user asks for store hours on a specific weekday.
-      Extract the weekday into slot_store_hours_day and normalize it to one of monday,
-      tuesday, wednesday, thursday, friday, saturday, or sunday.
+    description: Use this when the user asks for store hours on a specific weekday. Extract the weekday into slot_store_hours_day and normalize it to one of monday, tuesday, wednesday, thursday, friday, saturday, or sunday.
     nlu_trigger:
     - intent:
         name: ask_store_hours_for_day
@@ -34,8 +31,7 @@ flows:
     steps:
     - id: flow_get_store_hours_for_day_0_collect_slot_store_hours_day
       collect: slot_store_hours_day
-      description: The weekday the user is asking about. Normalize to lowercase weekday
-        names such as monday, tuesday, wednesday, thursday, friday, saturday, or sunday.
+      description: The weekday the user is asking about. Normalize to lowercase weekday names such as monday, tuesday, wednesday, thursday, friday, saturday, or sunday.
       ask_before_filling: false
       reset_after_flow_ends: true
       next: flow_get_store_hours_for_day_1_action_get_store_hours_for_day
@@ -45,13 +41,19 @@ flows:
       action: action_get_store_hours_for_day
   flow_check_order_status:
     name: Check order status
-    description: "Use this flow when the user asks to track an order, check order\
-      \ status,\ncheck delivery progress, or asks where an order is.\n\nExamples:\n\
-      \  - track order ord555\n  - check the status of order ord123\n  - where is\
-      \ order ord456\n  - has my order shipped?\n\nDo not use this flow when the user\
-      \ wants to return an order.\nDo not use this flow when the user wants to exchange\
-      \ an order.\nDo not use this flow when the user says \"exchange order\" or \"\
-      return order\".\n"
+    description: |
+      Use this flow when the user asks to track an order, check order status,
+      check delivery progress, or asks where an order is.
+
+      Examples:
+        - track order ord555
+        - check the status of order ord123
+        - where is order ord456
+        - has my order shipped?
+
+      Do not use this flow when the user wants to return an order.
+      Do not use this flow when the user wants to exchange an order.
+      Do not use this flow when the user says "exchange order" or "return order".
     run_pattern_completed: true
     steps:
     - id: flow_check_order_status_0_collect_slot_order_number
@@ -72,11 +74,7 @@ flows:
           next: END
           action: utter_order_delayed
       - else: message_utter_order_number_not_found
-      description: The order number the user provides. Capture the user answer exactly,
-        even if it looks invalid or malformed. Valid examples include ord123, ord456,
-        ord555, abc909, and abc123. Invalid examples such as 12345, bad-order-number,
-        or any other text the user claims is their order number should still be captured
-        so the rejection rule can validate it.
+      description: The order number the user provides. Capture the user answer exactly, even if it looks invalid or malformed. Valid examples include ord123, ord456, ord555, abc909, and abc123. Invalid examples such as 12345, bad-order-number, or any other text the user claims is their order number should still be captured so the rejection rule can validate it.
       collect: slot_order_number
       utter: utter_ask_slot_order_number
       ask_before_filling: false
@@ -84,23 +82,31 @@ flows:
       rejections:
       - if: not slots.slot_order_number matches "^[a-zA-Z]{3}[0-9]{3}$"
         utter: utter_valid_order_number_syntax
-      force_slot_filling: true
+      force_slot_filling: false
     - id: message_utter_order_number_not_found
       action: utter_order_number_not_found
-      next: reset_slot_order_number
-    - id: reset_slot_order_number
-      set_slots:
-      - slot_order_number: null
-      next: flow_check_order_status_0_collect_slot_order_number
+      next: flow_check_order_status_5_collect_slot_speak_to_human
+    - id: flow_check_order_status_5_collect_slot_speak_to_human
+      next:
+      - if: slots.slot_speak_to_human is "Yes"
+        then:
+        - id: flow_check_order_status_6_link_pattern_human_handoff
+          link: pattern_human_handoff
+      - else: END
+      description: Whether the user wants to speak to a human specialist. Set exactly Yes or No.
+      collect: slot_speak_to_human
+      utter: utter_ask_slot_speak_to_human
+      ask_before_filling: true
+      reset_after_flow_ends: true
+      rejections: []
+      force_slot_filling: false
     nlu_trigger:
     - intent:
         name: check_order_status
         confidence_threshold: 0.0
   flow_user_states_order_not_received:
     name: Order not received
-    description: This flow is triggered when a user states they haven't received their
-      order. It acknowledges the delay, explains that issues can occur during processing
-      or delivery.
+    description: This flow is triggered when a user states they haven't received their order. It acknowledges the delay, explains that issues can occur during processing or delivery.
     run_pattern_completed: true
     steps:
     - id: flow_user_states_order_not_received_0_utter_user_states_order_not_received
@@ -114,16 +120,23 @@ flows:
         confidence_threshold: 0.0
   flow_list_active_orders:
     name: Active order numbers
-    description: "Use this flow only when the user asks to list, show, view, or see\
-      \ all active orders\nassociated with their account or phone number.\n\nExamples:\n\
-      \  - What orders do I have?\n  - Show my active orders\n  - List my orders\n\
-      \  - Do I have any open orders?\n\nDo not use this flow when the user wants\
-      \ to track a specific order.\nDo not use this flow when the user provides an\
-      \ order number.\nDo not use this flow when the user wants to return an order.\n\
-      Do not use this flow when the user wants to exchange an order.\nDo not use this\
-      \ flow when the user wants to cancel an order.\nDo not use this flow when the\
-      \ user says an order was not received, never arrived,\nis missing, delayed,\
-      \ lost, or not delivered.\n"
+    description: |
+      Use this flow only when the user asks to list, show, view, or see all active orders
+      associated with their account or phone number.
+
+      Examples:
+        - What orders do I have?
+        - Show my active orders
+        - List my orders
+        - Do I have any open orders?
+
+      Do not use this flow when the user wants to track a specific order.
+      Do not use this flow when the user provides an order number.
+      Do not use this flow when the user wants to return an order.
+      Do not use this flow when the user wants to exchange an order.
+      Do not use this flow when the user wants to cancel an order.
+      Do not use this flow when the user says an order was not received, never arrived,
+      is missing, delayed, lost, or not delivered.
     run_pattern_completed: true
     steps:
     - id: flow_list_active_orders_0_utter_list_order_numbers
@@ -135,11 +148,20 @@ flows:
         confidence_threshold: 0.0
   flow_return_item:
     name: Return an item
-    description: "Use this flow when the user wants to return an item or return an\
-      \ order.\n\nExamples:\n  - I want to return an item\n  - I want to return order\
-      \ ord123\n  - return order ord456\n  - I need to send this back\n  - I want\
-      \ a refund for my order\n\nDo not use this flow when the user wants to exchange\
-      \ an item for a different\nsize, color, variant, or replacement item.\n"
+    description: |
+      Use this flow when the user wants to return an item or return an order.
+
+      Examples:
+        - I want to return an item
+        - I want to return order ord123
+        - return order ord456
+        - I need to send this back
+        - I want a refund for my order
+
+      Do not use this flow if the user says exchange, swap, replace, replacement,
+      different size, different color, wrong size, or wrong item.
+      If the user says exchange, use flow_exchange_item instead, even if they mention
+      an item or order number.
     persisted_slots:
     - slot_exchange_order_number
     run_pattern_completed: true
@@ -160,8 +182,7 @@ flows:
           - if: slots.slot_request_exchange_item is "Yes"
             then: set_slots_slot_exchange_order_number
           - else: message_utter_confirm_return_requested
-          description: Whether the user wants to exchange the item instead of only
-            returning it. Set exactly Yes or No.
+          description: Whether the user wants to exchange the item instead of only returning it. Set exactly Yes or No.
           collect: slot_request_exchange_item
           utter: utter_ask_slot_request_exchange_item
           ask_before_filling: false
@@ -188,8 +209,7 @@ flows:
             - id: flow_return_item_9_utter_email_label_return_instructions
               next: END
               action: utter_email_label_return_instructions
-          description: Whether the user already has the prepaid return label. Set
-            exactly Yes or No.
+          description: Whether the user already has the prepaid return label. Set exactly Yes or No.
           collect: slot_user_has_return_label
           utter: utter_ask_slot_user_has_return_label
           ask_before_filling: true
@@ -199,11 +219,7 @@ flows:
       - if: '{''ord456'' ''ord555''} contains slots.slot_order_number'
         then: message_utter_unable_to_return_not_delivered
       - else: message_utter_order_number_not_found
-      description: The order number the user provides. Capture the user answer exactly,
-        even if it looks invalid or malformed. Valid examples include ord123, ord456,
-        ord555, abc909, and abc123. Invalid examples such as 12345, bad-order-number,
-        or any other text the user claims is their order number should still be captured
-        so the rejection rule can validate it.
+      description: The order number the user provides. Capture the user answer exactly, even if it looks invalid or malformed. Valid examples include ord123, ord456, ord555, abc909, and abc123. Invalid examples such as 12345, bad-order-number, or any other text the user claims is their order number should still be captured so the rejection rule can validate it.
       collect: slot_order_number
       utter: utter_ask_slot_order_number
       ask_before_filling: false
@@ -224,23 +240,21 @@ flows:
           - if: slots.slot_speak_to_human is "Yes"
             then: connect_to_specialist
           - else: END
-          description: Whether the user wants to speak to a human specialist. Set
-            exactly Yes or No.
+          description: Whether the user wants to speak to a human specialist. Set exactly Yes or No.
           collect: slot_speak_to_human
           utter: utter_ask_slot_speak_to_human
           ask_before_filling: false
           reset_after_flow_ends: true
           rejections: []
-          force_slot_filling: true
+          force_slot_filling: false
       - else: END
-      description: Whether the user says the return request has been handled. Set
-        exactly Yes or No.
+      description: Whether the user says the return request has been handled. Set exactly Yes or No.
       collect: slot_return_request_handled
       utter: utter_ask_slot_return_request_handled
       ask_before_filling: true
       reset_after_flow_ends: true
       rejections: []
-      force_slot_filling: true
+      force_slot_filling: false
     - id: message_utter_order_number_not_found
       next: flow_return_item_15_collect_slot_speak_to_human
       action: utter_order_number_not_found
@@ -249,14 +263,13 @@ flows:
       - if: slots.slot_speak_to_human is "Yes"
         then: connect_to_specialist
       - else: END
-      description: Whether the user wants to speak to a human specialist. Set exactly
-        Yes or No.
+      description: Whether the user wants to speak to a human specialist. Set exactly Yes or No.
       collect: slot_speak_to_human
       utter: utter_ask_slot_speak_to_human
       ask_before_filling: true
       reset_after_flow_ends: true
       rejections: []
-      force_slot_filling: true
+      force_slot_filling: false
     - id: connect_to_specialist
       action: utter_connect_to_specialist
       next: hangup_call
@@ -268,13 +281,19 @@ flows:
         confidence_threshold: 0.0
   flow_exchange_item:
     name: Exchange an item
-    description: "Use this flow when the user wants to exchange an item or exchange\
-      \ an order\nfor a different size, color, variant, or replacement item.\n\nExamples:\n\
-      \  - exchange order ord123\n  - I want to exchange order ord123\n  - I need\
-      \ to exchange an item\n  - I ordered the wrong size and need an exchange\n \
-      \ - can I exchange this item?\n\nDo not use the check order status flow when\
-      \ the user says exchange.\nDo not use the return item flow when the user explicitly\
-      \ says exchange.\n"
+    description: |
+      Use this flow when the user wants to exchange an item or exchange an order
+      for a different size, color, variant, or replacement item.
+
+      Examples:
+        - exchange order ord123
+        - I want to exchange order ord123
+        - I need to exchange an item
+        - I ordered the wrong size and need an exchange
+        - can I exchange this item?
+
+      Do not use the check order status flow when the user says exchange.
+      Do not use the return item flow when the user explicitly says exchange.
     if: slots.slot_exchange_order_number is not "999"
     run_pattern_completed: true
     steps:
@@ -283,11 +302,7 @@ flows:
       - if: slots.slot_exchange_order_number is "ord123"
         then: message_utter_confirm_exchange_item
       - else: message_utter_order_number_not_found
-      description: The exchange order number the user provides. Capture the user answer
-        exactly, even if it looks invalid or malformed. Valid examples include ord123,
-        ord456, ord555, abc909, and abc123. Invalid examples such as 12345, bad-order-number,
-        or any other text the user claims is their order number should still be captured
-        so the rejection rule can validate it.
+      description: The exchange order number the user provides. Capture the user answer exactly, even if it looks invalid or malformed. Valid examples include ord123, ord456, ord555, abc909, and abc123. Invalid examples such as 12345, bad-order-number, or any other text the user claims is their order number should still be captured so the rejection rule can validate it.
       collect: slot_exchange_order_number
       utter: utter_ask_slot_exchange_order_number
       ask_before_filling: false
@@ -295,20 +310,19 @@ flows:
       rejections:
       - if: not slots.slot_exchange_order_number matches "^[a-zA-Z]{3}[0-9]{3}$"
         utter: utter_valid_order_number_syntax
-      force_slot_filling: true
+      force_slot_filling: false
     - id: message_utter_confirm_exchange_item
       next: flow_exchange_item_2_collect_slot_reason_for_item_exchange
       action: utter_confirm_exchange_item
     - id: flow_exchange_item_2_collect_slot_reason_for_item_exchange
       next: flow_exchange_item_3_utter_exchange_reason_thank_you
-      description: The reason for requesting an exchange. For example, size issue,
-        wrong item ordered, didn't fit right, not what I expected.
+      description: The reason for requesting an exchange. For example, size issue, wrong item ordered, didn't fit right, not what I expected.
       collect: slot_reason_for_item_exchange
       utter: utter_ask_slot_reason_for_item_exchange
       ask_before_filling: false
       reset_after_flow_ends: true
       rejections: []
-      force_slot_filling: true
+      force_slot_filling: false
     - id: flow_exchange_item_3_utter_exchange_reason_thank_you
       next: flow_exchange_item_4_collect_slot_user_has_return_label
       action: utter_exchange_reason_thank_you
@@ -323,14 +337,13 @@ flows:
         - id: flow_exchange_item_6_utter_email_label_return_instructions
           next: END
           action: utter_email_label_return_instructions
-      description: Whether the user already has the prepaid return label. Set exactly
-        Yes or No.
+      description: Whether the user already has the prepaid return label. Set exactly Yes or No.
       collect: slot_user_has_return_label
       utter: utter_ask_slot_user_has_return_label
       ask_before_filling: true
       reset_after_flow_ends: true
       rejections: []
-      force_slot_filling: true
+      force_slot_filling: false
     - id: message_utter_order_number_not_found
       next: flow_exchange_item_8_collect_slot_speak_to_human
       action: utter_order_number_not_found
@@ -342,14 +355,13 @@ flows:
           action: utter_connect_to_specialist
           next: hangup_call
       - else: END
-      description: Whether the user wants to speak to a human specialist. Set exactly
-        Yes or No.
+      description: Whether the user wants to speak to a human specialist. Set exactly Yes or No.
       collect: slot_speak_to_human
       utter: utter_ask_slot_speak_to_human
       ask_before_filling: false
       reset_after_flow_ends: true
       rejections: []
-      force_slot_filling: true
+      force_slot_filling: false
     - id: hangup_call
       link: hangup_call
     nlu_trigger:
@@ -358,18 +370,14 @@ flows:
         confidence_threshold: 0.0
   flow_pause_subscription:
     name: Pause subscription
-    description: This flow allows users to temporarily pause or place a hold on an
-      active subscription or membership (such as a gym plan or recurring service).
-      It confirms the account, gathers the preferred pause duration or reason, and
-      informs the user of any policy details or reactivation steps.
+    description: This flow allows users to temporarily pause or place a hold on an active subscription or membership (such as a gym plan or recurring service). It confirms the account, gathers the preferred pause duration or reason, and informs the user of any policy details or reactivation steps.
     persisted_slots:
     - slot_pause_subscription
     run_pattern_completed: true
     steps:
     - id: flow_pause_subscription_0_collect_slot_subscription_type
       next: flow_pause_subscription_1_collect_slot_pause_subscription
-      description: 'A type of subscription or membership. For instance: Gym membership,
-        Meal Kit service, Internet service, or  Subscription Boxes.'
+      description: 'A type of subscription or membership. For instance: Gym membership, Meal Kit service, Internet service, or  Subscription Boxes.'
       collect: slot_subscription_type
       utter: utter_ask_slot_subscription_type
       ask_before_filling: false
@@ -384,8 +392,7 @@ flows:
           next: END
           action: utter_subscription_paused
       - else: END
-      description: Whether the user wants to pause the subscription. Set exactly Yes
-        or No.
+      description: Whether the user wants to pause the subscription. Set exactly Yes or No.
       collect: slot_pause_subscription
       utter: utter_ask_slot_pause_subscription
       ask_before_filling: false
@@ -398,97 +405,139 @@ flows:
         confidence_threshold: 0.0
   flow_cancel_subscription:
     name: Cancel subscription
-    description: Internal follow-up flow after a specific subscription, membership,
-      service, or plan has been resolved.
+    description: |
+      Use this flow when the user explicitly wants to cancel a subscription, membership, service plan, or recurring service.
+      Do not use this flow when the user says "cancel", "cancel order", "cancel request", "stop", "nevermind", "never mind", "go back", or "main menu" while another flow is active. In those cases, the user wants to abandon the current assistant task, not cancel a subscription.
     steps:
-    - id: flow_cancel_subscription_0_prepare_confirmation
-      next: flow_cancel_subscription_1_confirm_cancellation
-      action: action_prepare_cancellation_confirmation
-    - id: flow_cancel_subscription_1_confirm_cancellation
-      next:
-      - if: slots.slot_confirmed is true
-        then: flow_cancel_subscription_2_check_for_promos
-      - else: END
-      collect: slot_confirmed
-      description: Confirm the user wants to cancel the selected subscription or membership.
-      ask_before_filling: true
-    - id: flow_cancel_subscription_2_check_for_promos
-      next: flow_cancel_subscription_4_collect_promo_response
+    - id: flow_cancel_subscription_0_collect_slot_subscription_type
+      next: flow_cancel_subscription_1_set_slots
+      description: 'A type of subscription or membership. For instance: Gym membership, Meal Kit service, Internet service, or  Subscription Boxes.'
+      collect: slot_subscription_type
+      utter: utter_ask_slot_subscription_type
+      ask_before_filling: false
+      reset_after_flow_ends: true
+      rejections: []
+      force_slot_filling: false
+    - id: flow_cancel_subscription_1_set_slots
+      next: message_utter_check_for_promotions
+      set_slots:
+      - slot_from_cancel_flow: "Yes"
+    - id: message_utter_check_for_promotions
+      next: flow_cancel_subscription_4_action_artificial_delay
+      action: utter_check_for_promotions
+    - id: flow_cancel_subscription_4_action_artificial_delay
+      next: flow_cancel_subscription_5_collect_slot_accepted_retention_offer
       action: action_artificial_delay
-    - id: flow_cancel_subscription_4_collect_promo_response
+    - id: flow_cancel_subscription_5_collect_slot_accepted_retention_offer
       next:
-      - if: slots.slot_user_wants_promo is "Yes"
-        then: flow_cancel_subscription_5_send_promo
-      - if: slots.slot_user_wants_promo is "No"
-        then: flow_cancel_subscription_6_cancel_subscription
-      - else: flow_cancel_subscription_6_cancel_subscription
-      collect: slot_user_wants_promo
-      description: Whether the user wants to accept the promotional offer.
+      - if: slots.slot_accepted_retention_offer is "Yes"
+        then: message_utter_send_sms_promo_text
+      - else:
+        - id: flow_cancel_subscription_6_utter_cancelled_subscription
+          next: END
+          action: utter_cancelled_subscription
+      description: Whether the user accepts the retention promotion offer. Set exactly Yes or No.
+      collect: slot_accepted_retention_offer
+      utter: utter_ask_slot_accepted_retention_offer
       ask_before_filling: true
-    - id: flow_cancel_subscription_5_send_promo
-      next: END
+      reset_after_flow_ends: true
+      rejections: []
+      force_slot_filling: true
+    - id: message_utter_send_sms_promo_text
+      next: flow_cancel_subscription_8_action_send_sms_promo_text
+      action: utter_send_sms_promo_text
+    - id: flow_cancel_subscription_8_action_send_sms_promo_text
+      next: flow_cancel_subscription_9_collect_slot_promo_text_received
       action: action_send_sms_promo_text
-    - id: flow_cancel_subscription_6_cancel_subscription
-      next: END
-      action: utter_cancelled_subscription
-  flow_cancel_item:
-    name: Cancel item
-    description: Generic cancellation router. Ask what the user wants to cancel, resolve
-      it, and route to the correct cancellation flow.
+    - id: flow_cancel_subscription_9_collect_slot_promo_text_received
+      next:
+      - if: slots.slot_promo_text_received is "Yes"
+        then:
+        - id: flow_cancel_subscription_10_utter_sms_promo_text_received
+          next: END
+          action: utter_sms_promo_text_received
+      - else: message_utter_sms_promo_text_not_received
+      description: Whether the user received the promo text and completed the required action. Set exactly Yes or No.
+      collect: slot_promo_text_received
+      utter: utter_ask_slot_promo_text_received
+      ask_before_filling: true
+      reset_after_flow_ends: true
+      rejections: []
+      force_slot_filling: true
+    - id: message_utter_sms_promo_text_not_received
+      next: flow_cancel_subscription_12_link_pattern_human_handoff
+      action: utter_sms_promo_text_not_received
+    - id: flow_cancel_subscription_12_link_pattern_human_handoff
+      link: pattern_human_handoff
     nlu_trigger:
-    - intent:
-        name: cancel_item
-        confidence_threshold: 0.8
     - intent:
         name: cancel_subscription
         confidence_threshold: 0.0
+
+  flow_cancel_item:
+    name: Cancel item
+    description: This flow is the generic cancellation router for users who want to cancel an actual product, service, subscription, membership, recurring plan, order, appointment, reservation, or delivery. Use this flow when the user says things like cancel my subscription, cancel my internet service, cancel my gym membership, cancel my order, or cancel my appointment. Ask what they want to cancel, then resolve the target and route to the correct cancellation flow. Do not use this flow when the user says "cancel this request", "nevermind", "stop", "go back", or "main menu"; those mean the user wants to cancel the current conversation flow.
     steps:
-    - id: flow_cancel_item_0_reset_cancellation_context
-      next: flow_cancel_item_0_get_cancellable_items
-      set_slots:
-      - slot_cancellation_target: null
-      - slot_cancellation_type: null
-      - selected_cancellable_item_id: null
-      - slot_subscription_type: null
-      - slot_cancellation_display_name: null
-      - slot_confirmed: null
-      - slot_user_wants_promo: null
-    - id: flow_cancel_item_0_get_cancellable_items
-      next: flow_cancel_item_1_collect_cancellation_target
-      action: action_get_cancellable_items
-    - id: flow_cancel_item_1_collect_cancellation_target
-      next: flow_cancel_item_2_resolve_cancellation_target
-      collect: slot_cancellation_target
-      description: The specific item, subscription, membership, order, service, or
-        appointment the user wants to cancel.
-      ask_before_filling: false
-    - id: flow_cancel_item_2_resolve_cancellation_target
-      next:
-      - if: slots.slot_cancellation_type is "subscription"
-        then: flow_cancel_item_3_call_cancel_subscription
-      - if: slots.slot_cancellation_type is "appointment"
-        then: flow_cancel_item_4_cancel_appointment
-      - if: slots.slot_cancellation_type is "order"
-        then: flow_cancel_item_5_cancel_order
-      - if: slots.slot_cancellation_type is "needs_clarification"
-        then: flow_cancel_item_6_reset_unmatched_cancellation_target
-      - else: flow_cancel_item_6_reset_unmatched_cancellation_target
-      action: action_resolve_cancellation_target
-    - id: flow_cancel_item_3_call_cancel_subscription
-      link: flow_cancel_subscription
-    - id: flow_cancel_item_4_cancel_appointment
-      next: END
-      action: utter_cancelled_appointment
-    - id: flow_cancel_item_5_cancel_order
-      next: END
-      action: utter_cancelled_order
-    - id: flow_cancel_item_6_reset_unmatched_cancellation_target
-      next: flow_cancel_item_1_collect_cancellation_target
-      set_slots:
-      - slot_cancellation_target: null
-      - slot_cancellation_type: null
-      - selected_cancellable_item_id: null
-      - slot_subscription_type: null
-      - slot_cancellation_display_name: null
-      - slot_confirmed: null
-      - slot_user_wants_promo: null
+      - id: flow_cancel_item_0_get_cancellable_items
+        next: flow_cancel_item_1_collect_cancellation_target
+        action: action_get_cancellable_items
+
+      - id: flow_cancel_item_1_collect_cancellation_target
+        next: flow_cancel_item_2_resolve_cancellation_target
+        description: The actual product, service, subscription, membership, order, appointment, reservation, or delivery the user wants to cancel. The user should describe the thing to cancel, such as internet service, gym membership, meal kit service, order, appointment, reservation, or delivery. Do not ask whether they mean a specific item or an entire subscription.
+        collect: slot_cancellation_target
+        utter: utter_ask_slot_cancellation_target
+        ask_before_filling: false
+        reset_after_flow_ends: true
+        force_slot_filling: false
+
+      - id: flow_cancel_item_2_resolve_cancellation_target
+        next:
+        - if: slots.slot_cancellation_type is "subscription"
+          then: flow_cancel_item_3_call_cancel_subscription
+        - if: slots.slot_cancellation_type is "appointment"
+          then: flow_cancel_item_4_cancel_appointment
+        - if: slots.slot_cancellation_type is "order"
+          then: flow_cancel_item_5_cancel_order
+        - else: flow_cancel_item_6_target_not_found
+        action: action_resolve_cancellation_target
+
+      - id: flow_cancel_item_3_call_cancel_subscription
+        link: flow_cancel_subscription
+
+      - id: flow_cancel_item_4_cancel_appointment
+        next: END
+        action: utter_cancelled_appointment
+
+      - id: flow_cancel_item_5_cancel_order
+        next: END
+        action: utter_cancelled_order
+
+      - id: flow_cancel_item_6_target_not_found
+        next: flow_cancel_item_7_reset_unmatched_cancellation_target
+        action: utter_cancellation_target_not_found
+
+      - id: flow_cancel_item_7_reset_unmatched_cancellation_target
+        next: flow_cancel_item_1_collect_cancellation_target
+        set_slots:
+        - slot_cancellation_target: null
+        - slot_cancellation_type: null
+        - selected_cancellable_item_id: null
+        - slot_subscription_type: null
+
+    nlu_trigger:
+      - intent:
+          name: cancel_item
+          confidence_threshold: 0.8
+
+
+  pattern_human_handoff:
+    name: pattern_human_handoff
+    description: Conversation repair flow for switching users to a human agent if their request can't be handled
+    run_pattern_completed: true
+    steps:
+    - id: pattern_human_handoff_0_utter_human_handoff_override
+      next: hangup_call
+      action: utter_human_handoff_override
+    - id: hangup_call
+      link: hangup_call

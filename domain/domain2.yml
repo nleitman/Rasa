@@ -89,9 +89,9 @@ responses:
     metadata:
       rephrase: true
   utter_confirm_exchange_item:
-  - text: Great, let exchange your item.
+  - text: Great, this order is eligible for an exchange.
     metadata:
-      rephrase: true
+      rephrase: false
   utter_confirm_return_requested:
   - text: Understood. I will help you with the return process now.
   utter_email_label_return_instructions:
@@ -186,8 +186,8 @@ slots:
     mappings:
     - type: from_llm
     values:
-    - true
-    - false
+    - Yes
+    - No
   slot_exchange_order_number:
     type: text
     mappings:
@@ -219,8 +219,8 @@ slots:
     mappings:
     - type: from_llm
     values:
-    - true
-    - false
+    - Yes
+    - No
   slot_reason_for_item_exchange:
     type: text
     mappings:
