@@ -78,7 +78,7 @@ responses:
   - text: Do you have the prepaid return label that was included with your order?
   - text: Do you still have the prepaid return label that came with the package?
   utter_cancelled_subscription:
-  - text: Understood. Your {slot_cancellation_display_name} has been cancelled.
+  - text: Understood. Your {slot_subscription_type} has been cancelled.
   utter_cancelled_appointment:
   - text: Understood. Your appointment has been cancelled.
   utter_cancelled_order:
@@ -141,14 +141,7 @@ responses:
   - text: Great, thanks for confirming.
   - text: Perfect, glad it came through.
   utter_subscription_paused:
-  - text: Understood. Your {slot_subscription_type} has been paused for 2 months.
-      There is no charge for this.
-  - text: Great. Your {slot_subscription_type} has been paused for 2 months. There
-      is no charge for this.
-    condition:
-    - type: slot
-      name: slot_from_cancel_flow
-      value: true
+    - text: Understood. Your {slot_subscription_type} has been paused for 2 months. There is no charge for this.
   utter_unable_to_return_not_delivered:
   - text: This order hasn't been delivered yet. Once it arrives, you'll get a prepaid
       return label you can use to send the item back.
@@ -194,13 +187,6 @@ slots:
     - type: from_entity
       entity: order_number
     - type: from_llm
-  slot_from_cancel_flow:
-    type: categorical
-    mappings:
-    - type: from_llm
-    values:
-    - true
-    - false
   slot_order_number:
     type: text
     mappings:
@@ -249,8 +235,7 @@ slots:
   slot_subscription_type:
     type: text
     mappings:
-    - type: from_entity
-      entity: subscription_type
+    - type: from_llm
   slot_user_has_return_label:
     type: categorical
     mappings:

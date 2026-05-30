@@ -128,10 +128,12 @@ responses:
       metadata:
         rephrase: True
   utter_ask_user_need_anything_else:
-    - text: "Is there anything else I can help you with before we end our call?"
+    - text: "Is there anything else I can help you with?"
   utter_goodbye:
-    - text: "Thank you for calling and have a wonderful day. Goodbye."
+    - text: "Thank you for contacting us and have a wonderful day. Goodbye."
   utter_what_next:
     - text: "What else can I help you with?"
   utter_ask_slot_store_hours_day:
     - text: "Which day do you want store hours for?"
+  utter_invalid_store_hours_day:
+    - text: I can only check store hours for a day of the week. Please choose Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, or Sunday.

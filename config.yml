@@ -5,17 +5,24 @@ assistant_id: se-take-home-test-2026H1
 pipeline:
 - name: WhitespaceTokenizer
 
+- name: RegexFeaturizer
+
 - name: CountVectorsFeaturizer
 
+- name: CountVectorsFeaturizer
+  analyzer: char_wb
+  min_ngram: 1
+  max_ngram: 4
+
 - name: DIETClassifier
-  epochs: 100
+  epochs: 300
   constrain_similarities: true
 
 - name: RegexEntityExtractor
   use_regexes: true
   use_lookup_tables: true
   use_word_boundaries: true
-  
+
 - name: NLUCommandAdapter
 
 - name: SearchReadyLLMCommandGenerator
